@@ -44,7 +44,8 @@ DISEASE_RISK_PROFILE = {
     "dengue":       0.5,  "meningitis":   0.5,
     "influenza":    0.5,  "covid":        0.85,
     "measles":      0.45, "polio":        0.4,
-    "typhoid":      0.35,
+    "typhoid":      0.35, "hantavirus":   0.75,
+    "nipah":        0.88, "monkeypox":    0.55,
 }
 
 DISEASE_FATALITY_WEIGHT = {
@@ -55,7 +56,8 @@ DISEASE_FATALITY_WEIGHT = {
     "dengue":       0.35, "meningitis":   0.5,
     "influenza":    0.4,  "covid":        0.7,
     "measles":      0.3,  "polio":        0.25,
-    "typhoid":      0.2,
+    "typhoid":      0.2,  "hantavirus":   0.7,
+    "nipah":        0.85, "monkeypox":    0.3,
 }
 
 DISEASE_PEAK_MONTHS = {
@@ -74,6 +76,9 @@ DISEASE_PEAK_MONTHS = {
     "polio":        [6,7,8,9],
     "typhoid":      [5,6,7,8,9,10],
     "covid":        [10,11,12,1,2],
+    "hantavirus":   [4,5,6,7,8],
+    "nipah":        [1,2,3,4,5],
+    "monkeypox":    [1,2,3,4,5,6],
 }
 
 DISEASE_ORDER = [
@@ -82,6 +87,19 @@ DISEASE_ORDER = [
     "mpox", "plague", "polio", "rift valley", "typhoid",
     "yellow fever",
 ]
+
+# Known location aliases — maps text mentions to clean country names
+LOCATION_ALIASES = {
+    "tenerife":           "Spain (Tenerife)",
+    "canary islands":     "Spain (Canary Islands)",
+    "drc":                "Democratic Republic of the Congo",
+    "congo":              "Democratic Republic of the Congo",
+    "democratic republic":"Democratic Republic of the Congo",
+    "brasil":             "Brazil",
+    "brasilia":           "Brazil",
+    "usa":                "United States",
+    "u.s.":               "United States",
+}
 
 URGENCY_WORDS = [
     "outbreak", "epidemic", "pandemic", "emergency", "death",
@@ -114,10 +132,6 @@ RESPONSE_KEYWORDS = [
 # ═══════════════════════════════════════════════════════════════
 
 def get_risk_level(score: float) -> str:
-    """
-    4-tier risk classification.
-    Returns clean text for CSV storage.
-    """
     if score >= 81:   return "Critical Risk"
     if score >= 61:   return "High Risk"
     if score >= 31:   return "Medium Risk"
@@ -125,7 +139,6 @@ def get_risk_level(score: float) -> str:
 
 
 def get_risk_emoji(level: str) -> str:
-    """Returns emoji prefix for terminal display only."""
     return {
         "Critical Risk": "🚨 Critical Risk",
         "High Risk":     "🔴 High Risk",
@@ -135,7 +148,6 @@ def get_risk_emoji(level: str) -> str:
 
 
 def get_confidence_band(prob: float) -> str:
-    """Returns confidence band based on model probability."""
     if prob >= 0.75: return "High Confidence"
     if prob >= 0.55: return "Medium Confidence"
     return "Low Confidence"
@@ -149,10 +161,6 @@ def get_top_risk_reason(
     disease_count: int,
     net_urgency: int,
 ) -> str:
-    """
-    Generates a human-readable risk reason from key signals.
-    Used in dashboard and briefings.
-    """
     if urgency_score >= 3 and disease_risk >= 0.7:
         return "High NLP urgency and disease risk"
     if spike_ratio >= config.SPIKE_RATIO_HIGH:
@@ -168,15 +176,27 @@ def get_top_risk_reason(
     return "Low current early-warning signal"
 
 
+def fix_country(country: str, title: str, summary: str) -> str:
+    """
+    Fixes unknown country using location aliases found in
+    article title and summary text.
+    """
+    if country and country.lower() != "unknown":
+        return country
+
+    text = f"{title} {summary}".lower()
+    for alias, clean_name in LOCATION_ALIASES.items():
+        if alias in text:
+            return clean_name
+
+    return "Unknown"
+
+
 # ═══════════════════════════════════════════════════════════════
 # LOAD MODEL
 # ═══════════════════════════════════════════════════════════════
 
 def load_model():
-    """
-    Loads the early-warning XGBoost model.
-    Validates it is the correct model type.
-    """
     model_path = ROOT / "models" / "xgboost_early_warning_model.pkl"
 
     if not model_path.exists():
@@ -187,7 +207,6 @@ def load_model():
     with open(model_path, "rb") as f:
         saved = pickle.load(f)
 
-    # Validate model mode
     mode = saved.get("mode", "unknown")
     if mode != "early_warning":
         log.error(f"Wrong model loaded! Mode={mode}. Need early_warning model.")
@@ -234,12 +253,15 @@ def build_features_for_row(
 ) -> dict:
     """
     Builds exact same features as Phase 6 for one live row.
-    All missing values filled with 0 — never raises KeyError.
+    All missing values filled with 0.
     """
-    disease  = str(row.get("disease", "") or "").lower().strip()
-    country  = str(row.get("country", "") or "").strip()
-    title    = str(row.get("title",   "") or "")
-    summary  = str(row.get("summary", "") or "")
+    disease = str(row.get("disease", "") or "").lower().strip()
+    title   = str(row.get("title",   "") or "")
+    summary = str(row.get("summary", "") or "")
+
+    # Fix unknown country using location aliases
+    raw_country = str(row.get("country", "") or "").strip()
+    country     = fix_country(raw_country, title, summary)
 
     try:
         date  = pd.to_datetime(row.get("date", datetime.today()))
@@ -258,8 +280,7 @@ def build_features_for_row(
     elif month in [6,7,8]:  season = 2
     else:                   season = 3
 
-    text = f"{title} {summary}".strip() or \
-           f"{disease} in {country}."
+    text = f"{title} {summary}".strip() or f"{disease} in {country}."
 
     # NLP
     doc       = nlp(text[:500])
@@ -290,11 +311,11 @@ def build_features_for_row(
     spike_level_enc = 0
 
     if not trends_df.empty and disease in trends_df["disease"].values:
-        d_trends       = trends_df[trends_df["disease"] == disease]
-        recent         = d_trends.sort_values("date").tail(4)
-        search_vol_avg = round(recent["search_volume"].mean(), 1)
-        search_vol_max = round(recent["search_volume"].max(),  1)
-        baseline       = max(d_trends["search_volume"].mean(), 1)
+        d_trends        = trends_df[trends_df["disease"] == disease]
+        recent          = d_trends.sort_values("date").tail(4)
+        search_vol_avg  = round(recent["search_volume"].mean(), 1)
+        search_vol_max  = round(recent["search_volume"].max(),  1)
+        baseline        = max(d_trends["search_volume"].mean(), 1)
         spike_ratio_max = round(search_vol_max / baseline, 2)
         spike_ratio_avg = round(search_vol_avg / baseline, 2)
         baseline_avg    = round(baseline, 1)
@@ -315,25 +336,24 @@ def build_features_for_row(
                       if disease in DISEASE_ORDER else -1
 
     # Frequency from historical data
-    disease_count  = int((hist_df["disease"] == disease).sum()) \
-                     if not hist_df.empty else 1
-    country_count  = int((hist_df["country"] == country).sum()) \
-                     if not hist_df.empty else 1
-    dc_count       = int(
+    disease_count = int((hist_df["disease"] == disease).sum()) \
+                    if not hist_df.empty else 1
+    country_count = int((hist_df["country"] == country).sum()) \
+                    if not hist_df.empty else 1
+    dc_count      = int(
         ((hist_df["disease"] == disease) &
          (hist_df["country"] == country)).sum()
     ) if not hist_df.empty else 0
-    is_endemic     = 1 if dc_count >= 3 else 0
+    is_endemic    = 1 if dc_count >= 3 else 0
 
-    has_trend_data = 1 if search_vol_avg > 0 else 0
-    spike_alert    = 1 if spike_ratio_max >= config.SPIKE_RATIO_HIGH   else 0
-    spike_warning  = 1 if spike_ratio_max >= config.SPIKE_RATIO_MEDIUM else 0
-
+    has_trend_data      = 1 if search_vol_avg > 0 else 0
+    spike_alert         = 1 if spike_ratio_max >= config.SPIKE_RATIO_HIGH   else 0
+    spike_warning       = 1 if spike_ratio_max >= config.SPIKE_RATIO_MEDIUM else 0
     has_who_mention     = 1 if ("who" in text.lower() or
                                 "world health" in text.lower()) else 0
     has_disease_in_text = 1 if disease in text.lower() else 0
     has_country_in_text = 1 if (country.lower() in text.lower()
-                                and country != "unknown") else 0
+                                and country.lower() != "unknown") else 0
 
     all_features = {
         "year":                      year,
@@ -380,7 +400,6 @@ def build_features_for_row(
         "spike_level_encoded":       spike_level_enc,
     }
 
-    # Return only model features, fill missing with 0
     return {k: float(all_features.get(k, 0)) for k in feature_cols}
 
 
@@ -392,10 +411,6 @@ def detect_early_warnings(
     trends_df: pd.DataFrame,
     who_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    """
-    Detects diseases where Trends spikes but WHO has no recent report.
-    These are genuine early-warning signals.
-    """
     if trends_df.empty:
         return pd.DataFrame()
 
@@ -453,7 +468,6 @@ def detect_early_warnings(
 
 def run_risk_scorer() -> pd.DataFrame:
 
-    # Step 1 — Load model
     log.info("─" * 55)
     log.info("STEP 1 — Loading Model")
     log.info("─" * 55)
@@ -462,12 +476,10 @@ def run_risk_scorer() -> pd.DataFrame:
     if model is None:
         return pd.DataFrame()
 
-    # Validate feature columns
     if not feature_cols:
         log.error("Feature columns are empty. Re-run model.py.")
         return pd.DataFrame()
 
-    # Step 2 — Load live data
     log.info("\n" + "─" * 55)
     log.info("STEP 2 — Loading Live Data")
     log.info("─" * 55)
@@ -502,13 +514,12 @@ def run_risk_scorer() -> pd.DataFrame:
         log.error("spaCy not found. Run: python -m spacy download en_core_web_sm")
         return pd.DataFrame()
 
-    # Step 3 — Score WHO articles
     log.info("\n" + "─" * 55)
     log.info("STEP 3 — Scoring WHO Articles")
     log.info("─" * 55)
 
-    scored_rows  = []
-    skipped      = 0
+    scored_rows = []
+    skipped     = 0
 
     if not who_df.empty:
         for _, row in who_df.iterrows():
@@ -529,10 +540,9 @@ def run_risk_scorer() -> pd.DataFrame:
                 risk_level = get_risk_level(risk_score)
                 confidence = get_confidence_band(risk_prob)
 
-                # Spike ratio for this disease
+                # Spike ratio
                 spike_ratio = 0.0
                 has_spike   = False
-                is_peak_val = 0
                 if not trends_df.empty and disease in trends_df["disease"].values:
                     d_t         = trends_df[trends_df["disease"] == disease]
                     recent_vol  = d_t.sort_values("date").tail(4)["search_volume"].mean()
@@ -540,31 +550,34 @@ def run_risk_scorer() -> pd.DataFrame:
                     spike_ratio = round(recent_vol / base, 2)
                     has_spike   = spike_ratio >= config.SPIKE_RATIO_LOW
 
-                month_now   = pd.to_datetime(
+                month_now    = pd.to_datetime(
                     row.get("date", datetime.today()), errors="coerce"
                 ).month
-                is_peak_val = 1 if month_now in DISEASE_PEAK_MONTHS.get(
-                    disease, []
-                ) else 0
-                disease_risk  = DISEASE_RISK_PROFILE.get(disease, 0.5)
-                disease_count = int((hist_df["disease"] == disease).sum()) \
-                                if not hist_df.empty else 1
-                urgency_text  = str(row.get("title","")) + " " + \
-                                str(row.get("summary",""))
-                urgency_val   = keyword_score(urgency_text, URGENCY_WORDS)
-                net_urg       = urgency_val - keyword_score(
-                    urgency_text, CONTAINMENT_WORDS
-                )
+                is_peak_val  = 1 if month_now in DISEASE_PEAK_MONTHS.get(disease, []) else 0
+                disease_risk = DISEASE_RISK_PROFILE.get(disease, 0.5)
+                disease_count= int((hist_df["disease"] == disease).sum()) \
+                               if not hist_df.empty else 1
+                urgency_text = str(row.get("title","")) + " " + str(row.get("summary",""))
+                urgency_val  = keyword_score(urgency_text, URGENCY_WORDS)
+                net_urg      = urgency_val - keyword_score(urgency_text, CONTAINMENT_WORDS)
 
                 top_reason = get_top_risk_reason(
                     urgency_val, spike_ratio, is_peak_val,
                     disease_risk, disease_count, net_urg
                 )
 
+                # Fix country
+                raw_country = str(row.get("country", "unknown"))
+                country     = fix_country(
+                    raw_country,
+                    str(row.get("title",   "")),
+                    str(row.get("summary", "")),
+                )
+
                 scored_rows.append({
                     "date":                   str(row.get("date",    "")),
                     "disease":                disease,
-                    "country":                str(row.get("country", "unknown")),
+                    "country":                country,
                     "severity":               str(row.get("severity","low")),
                     "source":                 str(row.get("source",  "")),
                     "title":                  str(row.get("title",   ""))[:120],
@@ -585,15 +598,9 @@ def run_risk_scorer() -> pd.DataFrame:
                 skipped += 1
 
         if skipped > 0:
-            log.warning(
-                f"  Skipped {skipped} articles "
-                f"(unknown disease or scoring error)"
-            )
+            log.warning(f"  Skipped {skipped} articles (unknown disease or scoring error)")
             if skipped > len(who_df) * 0.5:
-                log.warning(
-                    "  ⚠ More than 50% articles skipped — "
-                    "check disease detection in data_collection.py"
-                )
+                log.warning("  ⚠ More than 50% skipped — check disease detection")
 
     scored_df = pd.DataFrame(scored_rows).sort_values(
         ["risk_score", "escalation_probability"], ascending=False
@@ -601,7 +608,6 @@ def run_risk_scorer() -> pd.DataFrame:
 
     log.info(f"  Scored {len(scored_df)} WHO articles")
 
-    # Step 4 — Early warnings
     log.info("\n" + "─" * 55)
     log.info("STEP 4 — Early Warning Detection")
     log.info("─" * 55)
@@ -623,7 +629,6 @@ def run_risk_scorer() -> pd.DataFrame:
     else:
         log.info("  No spike signals above threshold")
 
-    # Step 5 — Save outputs
     log.info("\n" + "─" * 55)
     log.info("STEP 5 — Saving Outputs")
     log.info("─" * 55)
@@ -631,45 +636,37 @@ def run_risk_scorer() -> pd.DataFrame:
     output_dir = ROOT / "data" / "outputs"
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Risk scores — full dashboard-ready CSV
-    scored_path = output_dir / "risk_scores.csv"
     if not scored_df.empty:
-        scored_df.to_csv(scored_path, index=False)
+        scored_df.to_csv(output_dir / "risk_scores.csv", index=False)
         log.info(f"  Risk scores          → data/outputs/risk_scores.csv")
 
-    # High risk alerts only
-    alerts_path = output_dir / "high_risk_alerts.csv"
     if not scored_df.empty:
         alerts_df = scored_df[
             scored_df["risk_level"].isin(["High Risk", "Critical Risk"])
         ].sort_values(
             ["risk_score", "escalation_probability"], ascending=False
         ).reset_index(drop=True)
-        alerts_df.to_csv(alerts_path, index=False)
+        alerts_df.to_csv(output_dir / "high_risk_alerts.csv", index=False)
         log.info(f"  High risk alerts     → data/outputs/high_risk_alerts.csv "
                  f"({len(alerts_df)} alerts)")
 
-    # Early warnings
-    ew_path = output_dir / "early_warnings.csv"
     if not ew_df.empty:
-        ew_df.to_csv(ew_path, index=False)
+        ew_df.to_csv(output_dir / "early_warnings.csv", index=False)
         log.info(f"  Early warnings       → data/outputs/early_warnings.csv")
 
-    # Risk summary JSON
     true_ew_count = int(ew_df["early_warning"].sum()) if not ew_df.empty else 0
     summary = {
-        "total_scored":           len(scored_df),
-        "low_risk":               int((scored_df["risk_level"] == "Low Risk").sum())     if not scored_df.empty else 0,
-        "medium_risk":            int((scored_df["risk_level"] == "Medium Risk").sum())  if not scored_df.empty else 0,
-        "high_risk":              int((scored_df["risk_level"] == "High Risk").sum())    if not scored_df.empty else 0,
-        "critical_risk":          int((scored_df["risk_level"] == "Critical Risk").sum()) if not scored_df.empty else 0,
-        "early_warning_signals":  len(ew_df),
-        "true_early_warnings":    true_ew_count,
-        "model_used":             "xgboost_early_warning_model.pkl",
-        "scored_at":              datetime.now().strftime("%Y-%m-%d %H:%M"),
+        "total_scored":          len(scored_df),
+        "low_risk":              int((scored_df["risk_level"] == "Low Risk").sum())      if not scored_df.empty else 0,
+        "medium_risk":           int((scored_df["risk_level"] == "Medium Risk").sum())   if not scored_df.empty else 0,
+        "high_risk":             int((scored_df["risk_level"] == "High Risk").sum())     if not scored_df.empty else 0,
+        "critical_risk":         int((scored_df["risk_level"] == "Critical Risk").sum()) if not scored_df.empty else 0,
+        "early_warning_signals": len(ew_df),
+        "true_early_warnings":   true_ew_count,
+        "model_used":            "xgboost_early_warning_model.pkl",
+        "scored_at":             datetime.now().strftime("%Y-%m-%d %H:%M"),
     }
-    summary_path = output_dir / "risk_summary.json"
-    with open(summary_path, "w") as f:
+    with open(output_dir / "risk_summary.json", "w") as f:
         json.dump(summary, f, indent=2)
     log.info(f"  Risk summary         → data/outputs/risk_summary.json")
 
@@ -713,7 +710,6 @@ def main():
                     f"{r['top_risk_reason']}"
                 )
 
-    # Early warnings summary
     ew_path = ROOT / "data" / "outputs" / "early_warnings.csv"
     if ew_path.exists():
         ew_df   = pd.read_csv(ew_path)

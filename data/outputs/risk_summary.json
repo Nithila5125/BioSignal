@@ -1,11 +1,11 @@
 {
   "total_scored": 8,
-  "low_risk": 2,
-  "medium_risk": 2,
-  "high_risk": 2,
-  "critical_risk": 2,
+  "low_risk": 3,
+  "medium_risk": 3,
+  "high_risk": 1,
+  "critical_risk": 1,
   "early_warning_signals": 1,
   "true_early_warnings": 0,
   "model_used": "xgboost_early_warning_model.pkl",
-  "scored_at": "2026-06-24 22:25"
+  "scored_at": "2026-06-24 22:58"
 }
