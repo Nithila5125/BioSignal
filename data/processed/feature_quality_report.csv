@@ -1,0 +1,73 @@
+feature,dtype,missing_count,unique_values,variance,selected_for_ml,drop_reason
+date,str,0,931,,no,non-numeric or metadata
+year,int64,0,25,42.726072,yes,
+month,int64,0,12,11.58217,yes,
+week,int64,0,52,220.20758,yes,
+season,str,0,4,,no,non-numeric or metadata
+disease,str,0,15,,no,non-numeric or metadata
+country,str,0,154,,no,non-numeric or metadata
+severity,str,0,3,,no,non-numeric or metadata
+severity_score,int64,0,3,0.737157,yes,
+outbreak_relevance_score,int64,0,7,1.836532,yes,
+cases_total,int64,0,483,210475166.809197,yes,
+deaths,int64,0,300,137250.245505,yes,
+source,str,0,2,,no,non-numeric or metadata
+title,str,0,1093,,no,non-numeric or metadata
+summary,str,165,793,,no,non-numeric or metadata
+link,str,0,1092,,no,non-numeric or metadata
+search_volume_avg,float64,0,3,5.947113,yes,
+search_volume_max,float64,0,3,36.64189,yes,
+spike_ratio_max,float64,0,3,0.316046,yes,
+spike_ratio_avg,float64,0,3,0.05243,yes,
+spike_level_top,str,0,2,,no,non-numeric or metadata
+baseline_avg,float64,0,3,0.680172,yes,
+used_real_text,int64,0,1,0.0,no,low variance
+used_fallback_text,int64,0,1,0.0,no,low variance
+text_available,int64,0,1,0.0,no,low variance
+source_is_who,int64,0,1,0.0,no,low variance
+entity_count,int64,0,11,1.658024,yes,
+location_count,int64,0,6,0.498847,yes,
+org_count,int64,0,5,0.363003,yes,
+person_count,int64,0,3,0.046523,yes,
+date_entity_count,int64,0,5,0.628116,yes,
+numeric_entity_count,int64,0,5,0.790544,yes,
+has_who_mention,int64,0,2,0.013548,yes,
+has_cdc_mention,int64,0,2,0.000915,no,low variance
+urgency_score,int64,0,6,0.661241,yes,
+containment_score,int64,0,4,0.024624,yes,
+net_urgency,int64,0,8,0.681974,yes,
+risk_keyword_count,int64,0,2,0.009972,yes,
+response_keyword_count,int64,0,4,0.0164,yes,
+escalation_language_flag,int64,0,2,0.174572,yes,
+containment_language_flag,int64,0,2,0.00274,no,low variance
+word_count,int64,0,28,30.222741,yes,
+sentence_count,int64,0,4,0.48568,yes,
+avg_sentence_length,float64,0,43,18.413439,yes,
+has_disease_in_text,int64,0,2,0.184777,yes,
+has_country_in_text,int64,0,2,0.141947,yes,
+top_location_entities,str,479,189,,no,non-numeric or metadata
+disease_risk_score,float64,0,11,0.028156,yes,
+disease_fatality_weight,float64,0,14,0.041708,yes,
+disease_escalation_rate,float64,0,15,0.047562,no,target leakage
+disease_outbreak_count,int64,0,15,5795.909775,yes,
+is_peak_season,int64,0,2,0.24108,yes,
+season_risk,float64,0,2,0.021697,yes,
+country_outbreak_count,int64,0,28,551.776817,yes,
+disease_country_count,int64,0,22,426.061279,yes,
+is_endemic_country,int64,0,2,0.190724,yes,
+case_fatality_ratio,float64,0,422,0.051804,yes,
+has_deaths,int64,0,2,0.226722,yes,
+has_cases,int64,0,2,0.23596,yes,
+log_cases,float64,0,483,11.909861,yes,
+log_deaths,float64,0,300,5.332316,yes,
+cases_per_death,float64,0,430,68987.070084,yes,
+has_trend_data,int64,0,2,0.004558,yes,
+spike_alert,int64,0,2,0.00365,yes,
+spike_warning,int64,0,2,0.00365,yes,
+combined_risk_score,float64,0,26,0.027184,no,target leakage
+estimated_lead_days,int64,0,10,6.59427,no,target leakage
+lead_time_category,str,0,1,,no,non-numeric or metadata
+lead_time_encoded,int64,0,1,0.0,no,target leakage
+disease_encoded,int64,0,15,23.537134,yes,
+season_encoded,int64,0,4,1.191468,yes,
+spike_level_encoded,int64,0,2,0.032846,yes,
