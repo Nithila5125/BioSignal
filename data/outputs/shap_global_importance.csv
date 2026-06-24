@@ -1,0 +1,41 @@
+feature,mean_abs_shap,importance_rank,human_readable_feature,plain_english_meaning
+numeric_entity_count,0.632217,1,numerical indicators in article,Higher numerical indicators in article increases outbreak escalation risk
+disease_country_count,0.566363,2,repeated disease-country outbreak pattern,Higher repeated disease-country outbreak pattern increases outbreak escalation risk
+disease_risk_score,0.534902,3,historical disease risk profile,Higher historical disease risk profile increases outbreak escalation risk
+sentence_count,0.437686,4,report detail level,Higher report detail level increases outbreak escalation risk
+entity_count,0.397096,5,named entities in article,Higher named entities in article increases outbreak escalation risk
+disease_encoded,0.374408,6,disease category signal,Higher disease category signal increases outbreak escalation risk
+year,0.312727,7,report year,Higher report year increases outbreak escalation risk
+country_outbreak_count,0.295493,8,country outbreak history,Higher country outbreak history increases outbreak escalation risk
+disease_outbreak_count,0.278504,9,disease outbreak history,Higher disease outbreak history increases outbreak escalation risk
+disease_fatality_weight,0.269717,10,disease fatality weight,Higher disease fatality weight increases outbreak escalation risk
+week,0.214966,11,report week,Higher report week increases outbreak escalation risk
+word_count,0.200048,12,report length,Higher report length increases outbreak escalation risk
+net_urgency,0.191579,13,urgency outweighing containment language,Higher urgency outweighing containment language increases outbreak escalation risk
+has_disease_in_text,0.179284,14,disease name in text,Higher disease name in text increases outbreak escalation risk
+avg_sentence_length,0.161561,15,average sentence length,Higher average sentence length increases outbreak escalation risk
+urgency_score,0.158224,16,urgency language in outbreak report,Higher urgency language in outbreak report increases outbreak escalation risk
+date_entity_count,0.143962,17,date references,Higher date references increases outbreak escalation risk
+month,0.098861,18,report month,Higher report month increases outbreak escalation risk
+location_count,0.075434,19,location mentions,Higher location mentions increases outbreak escalation risk
+org_count,0.065938,20,organization mentions,Higher organization mentions increases outbreak escalation risk
+is_peak_season,0.051041,21,seasonal disease risk,Higher seasonal disease risk increases outbreak escalation risk
+season_encoded,0.050087,22,season category,Higher season category increases outbreak escalation risk
+escalation_language_flag,0.010831,23,escalation language detected,Higher escalation language detected increases outbreak escalation risk
+has_country_in_text,0.010667,24,country name in text,Higher country name in text increases outbreak escalation risk
+season_risk,0.008842,25,seasonal risk boost,Higher seasonal risk boost increases outbreak escalation risk
+person_count,0.006289,26,person mentions,Higher person mentions increases outbreak escalation risk
+is_endemic_country,0.005835,27,endemic country flag,Higher endemic country flag increases outbreak escalation risk
+baseline_avg,0.0,28,search volume baseline,Higher search volume baseline increases outbreak escalation risk
+search_volume_avg,0.0,29,average search interest,Higher average search interest increases outbreak escalation risk
+spike_ratio_avg,0.0,30,average Google Trends spike,Higher average Google Trends spike increases outbreak escalation risk
+spike_ratio_max,0.0,31,Google Trends spike strength,Higher Google Trends spike strength increases outbreak escalation risk
+search_volume_max,0.0,32,peak search interest,Higher peak search interest increases outbreak escalation risk
+risk_keyword_count,0.0,33,risk-related keywords,Higher risk-related keywords increases outbreak escalation risk
+containment_score,0.0,34,containment language in report,Higher containment language in report increases outbreak escalation risk
+response_keyword_count,0.0,35,response action keywords,Higher response action keywords increases outbreak escalation risk
+has_who_mention,0.0,36,WHO mentioned in report,Higher WHO mentioned in report increases outbreak escalation risk
+spike_alert,0.0,37,major Google Trends spike,Higher major Google Trends spike increases outbreak escalation risk
+has_trend_data,0.0,38,Google Trends signal available,Higher Google Trends signal available increases outbreak escalation risk
+spike_warning,0.0,39,moderate Google Trends spike,Higher moderate Google Trends spike increases outbreak escalation risk
+spike_level_encoded,0.0,40,spike severity level,Higher spike severity level increases outbreak escalation risk

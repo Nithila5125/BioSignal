@@ -1,0 +1,33 @@
+{
+  "total_rows_explained": 1093,
+  "total_features": 40,
+  "top_5_global_features": [
+    {
+      "feature": "numeric_entity_count",
+      "mean_abs_shap": 0.6322169899940491,
+      "human_readable_feature": "numerical indicators in article"
+    },
+    {
+      "feature": "disease_country_count",
+      "mean_abs_shap": 0.5663629770278931,
+      "human_readable_feature": "repeated disease-country outbreak pattern"
+    },
+    {
+      "feature": "disease_risk_score",
+      "mean_abs_shap": 0.5349019765853882,
+      "human_readable_feature": "historical disease risk profile"
+    },
+    {
+      "feature": "sentence_count",
+      "mean_abs_shap": 0.4376859962940216,
+      "human_readable_feature": "report detail level"
+    },
+    {
+      "feature": "entity_count",
+      "mean_abs_shap": 0.39709600806236267,
+      "human_readable_feature": "named entities in article"
+    }
+  ],
+  "model_used": "xgboost_early_warning_model.pkl",
+  "generated_at": "2026-06-24 17:12"
+}
