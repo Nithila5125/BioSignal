@@ -1,0 +1,141 @@
+{
+  "diagnostic": {
+    "results": [
+      {
+        "model": "Logistic Regression",
+        "accuracy": 0.7397,
+        "precision": 1.0,
+        "recall": 0.5682,
+        "f1": 0.7246,
+        "roc_auc": 0.9584,
+        "tn": 87,
+        "fp": 0,
+        "fn": 57,
+        "tp": 75,
+        "mode": "diagnostic"
+      },
+      {
+        "model": "Random Forest",
+        "accuracy": 0.9954,
+        "precision": 1.0,
+        "recall": 0.9924,
+        "f1": 0.9962,
+        "roc_auc": 1.0,
+        "tn": 87,
+        "fp": 0,
+        "fn": 1,
+        "tp": 131,
+        "mode": "diagnostic"
+      },
+      {
+        "model": "XGBoost",
+        "accuracy": 1.0,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "roc_auc": 1.0,
+        "tn": 87,
+        "fp": 0,
+        "fn": 0,
+        "tp": 132,
+        "mode": "diagnostic"
+      }
+    ],
+    "cv": {
+      "cv_f1_mean": 1.0,
+      "cv_auc_mean": 1.0,
+      "cv_f1_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "cv_auc_scores": [
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "n_features": 50
+  },
+  "early_warning": {
+    "results": [
+      {
+        "model": "Logistic Regression",
+        "accuracy": 0.7489,
+        "precision": 0.8667,
+        "recall": 0.6894,
+        "f1": 0.7679,
+        "roc_auc": 0.8277,
+        "tn": 73,
+        "fp": 14,
+        "fn": 41,
+        "tp": 91,
+        "mode": "early_warning"
+      },
+      {
+        "model": "Random Forest",
+        "accuracy": 0.8174,
+        "precision": 0.877,
+        "recall": 0.8106,
+        "f1": 0.8425,
+        "roc_auc": 0.9201,
+        "tn": 72,
+        "fp": 15,
+        "fn": 25,
+        "tp": 107,
+        "mode": "early_warning"
+      },
+      {
+        "model": "XGBoost",
+        "accuracy": 0.8676,
+        "precision": 0.8992,
+        "recall": 0.8788,
+        "f1": 0.8889,
+        "roc_auc": 0.951,
+        "tn": 74,
+        "fp": 13,
+        "fn": 16,
+        "tp": 116,
+        "mode": "early_warning"
+      }
+    ],
+    "cv": {
+      "cv_f1_mean": 0.8966,
+      "cv_auc_mean": 0.9427,
+      "cv_f1_scores": [
+        0.9015,
+        0.8516,
+        0.9098,
+        0.9104,
+        0.9098
+      ],
+      "cv_auc_scores": [
+        0.9432,
+        0.9154,
+        0.9539,
+        0.9401,
+        0.9606
+      ]
+    },
+    "n_features": 40,
+    "removed": [
+      "severity_score",
+      "cases_total",
+      "deaths",
+      "log_cases",
+      "log_deaths",
+      "case_fatality_ratio",
+      "has_deaths",
+      "has_cases",
+      "cases_per_death",
+      "outbreak_relevance_score"
+    ]
+  },
+  "project": "BioSignal",
+  "tagline": "Detects epidemic outbreak signals before WHO official reports",
+  "saved_at": "2026-06-24 16:41"
+}
