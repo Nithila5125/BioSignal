@@ -1,0 +1,11 @@
+{
+  "total_scored": 5,
+  "low_risk": 2,
+  "medium_risk": 1,
+  "high_risk": 1,
+  "critical_risk": 1,
+  "early_warning_signals": 1,
+  "true_early_warnings": 0,
+  "model_used": "xgboost_early_warning_model.pkl",
+  "scored_at": "2026-06-24 16:58"
+}
