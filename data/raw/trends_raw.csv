@@ -423,3 +423,533 @@ date,search_volume,disease
 2026-05-31,8,mpox
 2026-06-07,5,mpox
 2026-06-14,4,mpox
+2025-06-22,59,covid
+2025-06-29,52,covid
+2025-07-06,67,covid
+2025-07-13,57,covid
+2025-07-20,60,covid
+2025-07-27,59,covid
+2025-08-03,66,covid
+2025-08-10,71,covid
+2025-08-17,81,covid
+2025-08-24,87,covid
+2025-08-31,97,covid
+2025-09-07,96,covid
+2025-09-14,99,covid
+2025-09-21,96,covid
+2025-09-28,100,covid
+2025-10-05,82,covid
+2025-10-12,77,covid
+2025-10-19,70,covid
+2025-10-26,62,covid
+2025-11-02,58,covid
+2025-11-09,57,covid
+2025-11-16,58,covid
+2025-11-23,54,covid
+2025-11-30,57,covid
+2025-12-07,59,covid
+2025-12-14,59,covid
+2025-12-21,50,covid
+2025-12-28,51,covid
+2026-01-04,48,covid
+2026-01-11,50,covid
+2026-01-18,47,covid
+2026-01-25,52,covid
+2026-02-01,50,covid
+2026-02-08,56,covid
+2026-02-15,52,covid
+2026-02-22,52,covid
+2026-03-01,53,covid
+2026-03-08,52,covid
+2026-03-15,52,covid
+2026-03-22,68,covid
+2026-03-29,76,covid
+2026-04-05,63,covid
+2026-04-12,53,covid
+2026-04-19,50,covid
+2026-04-26,50,covid
+2026-05-03,69,covid
+2026-05-10,66,covid
+2026-05-17,54,covid
+2026-05-24,50,covid
+2026-05-31,49,covid
+2026-06-07,43,covid
+2026-06-14,36,covid
+2026-06-21,37,covid
+2025-06-22,0,hantavirus
+2025-06-29,0,hantavirus
+2025-07-06,0,hantavirus
+2025-07-13,0,hantavirus
+2025-07-20,0,hantavirus
+2025-07-27,0,hantavirus
+2025-08-03,0,hantavirus
+2025-08-10,0,hantavirus
+2025-08-17,0,hantavirus
+2025-08-24,0,hantavirus
+2025-08-31,0,hantavirus
+2025-09-07,0,hantavirus
+2025-09-14,0,hantavirus
+2025-09-21,0,hantavirus
+2025-09-28,0,hantavirus
+2025-10-05,0,hantavirus
+2025-10-12,0,hantavirus
+2025-10-19,0,hantavirus
+2025-10-26,0,hantavirus
+2025-11-02,0,hantavirus
+2025-11-09,0,hantavirus
+2025-11-16,0,hantavirus
+2025-11-23,0,hantavirus
+2025-11-30,0,hantavirus
+2025-12-07,0,hantavirus
+2025-12-14,0,hantavirus
+2025-12-21,0,hantavirus
+2025-12-28,0,hantavirus
+2026-01-04,0,hantavirus
+2026-01-11,0,hantavirus
+2026-01-18,0,hantavirus
+2026-01-25,0,hantavirus
+2026-02-01,0,hantavirus
+2026-02-08,0,hantavirus
+2026-02-15,0,hantavirus
+2026-02-22,0,hantavirus
+2026-03-01,0,hantavirus
+2026-03-08,0,hantavirus
+2026-03-15,0,hantavirus
+2026-03-22,0,hantavirus
+2026-03-29,0,hantavirus
+2026-04-05,0,hantavirus
+2026-04-12,0,hantavirus
+2026-04-19,0,hantavirus
+2026-04-26,0,hantavirus
+2026-05-03,100,hantavirus
+2026-05-10,67,hantavirus
+2026-05-17,13,hantavirus
+2026-05-24,6,hantavirus
+2026-05-31,2,hantavirus
+2026-06-07,2,hantavirus
+2026-06-14,1,hantavirus
+2026-06-21,1,hantavirus
+2025-06-22,22,influenza
+2025-06-29,19,influenza
+2025-07-06,19,influenza
+2025-07-13,18,influenza
+2025-07-20,20,influenza
+2025-07-27,22,influenza
+2025-08-03,21,influenza
+2025-08-10,24,influenza
+2025-08-17,26,influenza
+2025-08-24,26,influenza
+2025-08-31,28,influenza
+2025-09-07,29,influenza
+2025-09-14,31,influenza
+2025-09-21,37,influenza
+2025-09-28,42,influenza
+2025-10-05,47,influenza
+2025-10-12,68,influenza
+2025-10-19,56,influenza
+2025-10-26,46,influenza
+2025-11-02,47,influenza
+2025-11-09,48,influenza
+2025-11-16,52,influenza
+2025-11-23,58,influenza
+2025-11-30,61,influenza
+2025-12-07,75,influenza
+2025-12-14,100,influenza
+2025-12-21,99,influenza
+2025-12-28,90,influenza
+2026-01-04,76,influenza
+2026-01-11,69,influenza
+2026-01-18,64,influenza
+2026-01-25,71,influenza
+2026-02-01,65,influenza
+2026-02-08,59,influenza
+2026-02-15,57,influenza
+2026-02-22,49,influenza
+2026-03-01,48,influenza
+2026-03-08,43,influenza
+2026-03-15,43,influenza
+2026-03-22,49,influenza
+2026-03-29,46,influenza
+2026-04-05,46,influenza
+2026-04-12,41,influenza
+2026-04-19,41,influenza
+2026-04-26,38,influenza
+2026-05-03,44,influenza
+2026-05-10,53,influenza
+2026-05-17,51,influenza
+2026-05-24,53,influenza
+2026-05-31,59,influenza
+2026-06-07,36,influenza
+2026-06-14,29,influenza
+2026-06-21,31,influenza
+2025-06-22,9,meningitis
+2025-06-29,8,meningitis
+2025-07-06,7,meningitis
+2025-07-13,7,meningitis
+2025-07-20,8,meningitis
+2025-07-27,8,meningitis
+2025-08-03,9,meningitis
+2025-08-10,8,meningitis
+2025-08-17,8,meningitis
+2025-08-24,8,meningitis
+2025-08-31,8,meningitis
+2025-09-07,7,meningitis
+2025-09-14,8,meningitis
+2025-09-21,9,meningitis
+2025-09-28,8,meningitis
+2025-10-05,8,meningitis
+2025-10-12,8,meningitis
+2025-10-19,7,meningitis
+2025-10-26,8,meningitis
+2025-11-02,7,meningitis
+2025-11-09,8,meningitis
+2025-11-16,9,meningitis
+2025-11-23,8,meningitis
+2025-11-30,8,meningitis
+2025-12-07,8,meningitis
+2025-12-14,8,meningitis
+2025-12-21,6,meningitis
+2025-12-28,8,meningitis
+2026-01-04,8,meningitis
+2026-01-11,7,meningitis
+2026-01-18,7,meningitis
+2026-01-25,8,meningitis
+2026-02-01,9,meningitis
+2026-02-08,8,meningitis
+2026-02-15,8,meningitis
+2026-02-22,8,meningitis
+2026-03-01,8,meningitis
+2026-03-08,8,meningitis
+2026-03-15,100,meningitis
+2026-03-22,30,meningitis
+2026-03-29,14,meningitis
+2026-04-05,12,meningitis
+2026-04-12,11,meningitis
+2026-04-19,9,meningitis
+2026-04-26,9,meningitis
+2026-05-03,10,meningitis
+2026-05-10,12,meningitis
+2026-05-17,10,meningitis
+2026-05-24,10,meningitis
+2026-05-31,12,meningitis
+2026-06-07,8,meningitis
+2026-06-14,10,meningitis
+2026-06-21,7,meningitis
+2025-06-22,36,polio
+2025-06-29,34,polio
+2025-07-06,35,polio
+2025-07-13,35,polio
+2025-07-20,37,polio
+2025-07-27,37,polio
+2025-08-03,42,polio
+2025-08-10,41,polio
+2025-08-17,44,polio
+2025-08-24,41,polio
+2025-08-31,57,polio
+2025-09-07,55,polio
+2025-09-14,45,polio
+2025-09-21,47,polio
+2025-09-28,50,polio
+2025-10-05,83,polio
+2025-10-12,100,polio
+2025-10-19,61,polio
+2025-10-26,45,polio
+2025-11-02,41,polio
+2025-11-09,46,polio
+2025-11-16,47,polio
+2025-11-23,50,polio
+2025-11-30,50,polio
+2025-12-07,47,polio
+2025-12-14,61,polio
+2025-12-21,82,polio
+2025-12-28,33,polio
+2026-01-04,38,polio
+2026-01-11,41,polio
+2026-01-18,43,polio
+2026-01-25,46,polio
+2026-02-01,50,polio
+2026-02-08,47,polio
+2026-02-15,46,polio
+2026-02-22,49,polio
+2026-03-01,66,polio
+2026-03-08,49,polio
+2026-03-15,45,polio
+2026-03-22,43,polio
+2026-03-29,39,polio
+2026-04-05,43,polio
+2026-04-12,44,polio
+2026-04-19,44,polio
+2026-04-26,43,polio
+2026-05-03,45,polio
+2026-05-10,46,polio
+2026-05-17,46,polio
+2026-05-24,41,polio
+2026-05-31,44,polio
+2026-06-07,36,polio
+2026-06-14,36,polio
+2026-06-21,43,polio
+2025-06-22,61,typhoid
+2025-06-29,60,typhoid
+2025-07-06,62,typhoid
+2025-07-13,70,typhoid
+2025-07-20,67,typhoid
+2025-07-27,73,typhoid
+2025-08-03,70,typhoid
+2025-08-10,87,typhoid
+2025-08-17,94,typhoid
+2025-08-24,96,typhoid
+2025-08-31,96,typhoid
+2025-09-07,100,typhoid
+2025-09-14,88,typhoid
+2025-09-21,85,typhoid
+2025-09-28,71,typhoid
+2025-10-05,76,typhoid
+2025-10-12,85,typhoid
+2025-10-19,67,typhoid
+2025-10-26,69,typhoid
+2025-11-02,66,typhoid
+2025-11-09,65,typhoid
+2025-11-16,62,typhoid
+2025-11-23,64,typhoid
+2025-11-30,57,typhoid
+2025-12-07,54,typhoid
+2025-12-14,54,typhoid
+2025-12-21,45,typhoid
+2025-12-28,45,typhoid
+2026-01-04,56,typhoid
+2026-01-11,55,typhoid
+2026-01-18,55,typhoid
+2026-01-25,60,typhoid
+2026-02-01,62,typhoid
+2026-02-08,67,typhoid
+2026-02-15,69,typhoid
+2026-02-22,71,typhoid
+2026-03-01,66,typhoid
+2026-03-08,67,typhoid
+2026-03-15,65,typhoid
+2026-03-22,66,typhoid
+2026-03-29,67,typhoid
+2026-04-05,72,typhoid
+2026-04-12,64,typhoid
+2026-04-19,70,typhoid
+2026-04-26,61,typhoid
+2026-05-03,62,typhoid
+2026-05-10,70,typhoid
+2026-05-17,67,typhoid
+2026-05-24,69,typhoid
+2026-05-31,72,typhoid
+2026-06-07,59,typhoid
+2026-06-14,56,typhoid
+2026-06-21,59,typhoid
+2025-06-22,71,monkeypox
+2025-06-29,58,monkeypox
+2025-07-06,55,monkeypox
+2025-07-13,53,monkeypox
+2025-07-20,61,monkeypox
+2025-07-27,57,monkeypox
+2025-08-03,62,monkeypox
+2025-08-10,97,monkeypox
+2025-08-17,100,monkeypox
+2025-08-24,77,monkeypox
+2025-08-31,86,monkeypox
+2025-09-07,73,monkeypox
+2025-09-14,62,monkeypox
+2025-09-21,65,monkeypox
+2025-09-28,85,monkeypox
+2025-10-05,56,monkeypox
+2025-10-12,75,monkeypox
+2025-10-19,67,monkeypox
+2025-10-26,52,monkeypox
+2025-11-02,49,monkeypox
+2025-11-09,44,monkeypox
+2025-11-16,51,monkeypox
+2025-11-23,43,monkeypox
+2025-11-30,51,monkeypox
+2025-12-07,44,monkeypox
+2025-12-14,45,monkeypox
+2025-12-21,35,monkeypox
+2025-12-28,37,monkeypox
+2026-01-04,40,monkeypox
+2026-01-11,51,monkeypox
+2026-01-18,51,monkeypox
+2026-01-25,62,monkeypox
+2026-02-01,71,monkeypox
+2026-02-08,54,monkeypox
+2026-02-15,71,monkeypox
+2026-02-22,92,monkeypox
+2026-03-01,45,monkeypox
+2026-03-08,42,monkeypox
+2026-03-15,49,monkeypox
+2026-03-22,49,monkeypox
+2026-03-29,66,monkeypox
+2026-04-05,54,monkeypox
+2026-04-12,52,monkeypox
+2026-04-19,50,monkeypox
+2026-04-26,48,monkeypox
+2026-05-03,72,monkeypox
+2026-05-10,60,monkeypox
+2026-05-17,48,monkeypox
+2026-05-24,40,monkeypox
+2026-05-31,62,monkeypox
+2026-06-07,35,monkeypox
+2026-06-14,30,monkeypox
+2026-06-21,28,monkeypox
+2025-06-22,53,measles
+2025-06-29,40,measles
+2025-07-06,58,measles
+2025-07-13,63,measles
+2025-07-20,43,measles
+2025-07-27,36,measles
+2025-08-03,39,measles
+2025-08-10,41,measles
+2025-08-17,41,measles
+2025-08-24,40,measles
+2025-08-31,49,measles
+2025-09-07,44,measles
+2025-09-14,45,measles
+2025-09-21,45,measles
+2025-09-28,47,measles
+2025-10-05,47,measles
+2025-10-12,51,measles
+2025-10-19,41,measles
+2025-10-26,44,measles
+2025-11-02,41,measles
+2025-11-09,57,measles
+2025-11-16,46,measles
+2025-11-23,42,measles
+2025-11-30,42,measles
+2025-12-07,54,measles
+2025-12-14,51,measles
+2025-12-21,34,measles
+2025-12-28,51,measles
+2026-01-04,42,measles
+2026-01-11,55,measles
+2026-01-18,68,measles
+2026-01-25,66,measles
+2026-02-01,100,measles
+2026-02-08,98,measles
+2026-02-15,98,measles
+2026-02-22,81,measles
+2026-03-01,70,measles
+2026-03-08,60,measles
+2026-03-15,58,measles
+2026-03-22,52,measles
+2026-03-29,54,measles
+2026-04-05,50,measles
+2026-04-12,49,measles
+2026-04-19,51,measles
+2026-04-26,49,measles
+2026-05-03,47,measles
+2026-05-10,50,measles
+2026-05-17,42,measles
+2026-05-24,38,measles
+2026-05-31,43,measles
+2026-06-07,30,measles
+2026-06-14,26,measles
+2026-06-21,26,measles
+2025-06-22,13,rift valley fever
+2025-06-29,10,rift valley fever
+2025-07-06,9,rift valley fever
+2025-07-13,9,rift valley fever
+2025-07-20,12,rift valley fever
+2025-07-27,16,rift valley fever
+2025-08-03,15,rift valley fever
+2025-08-10,25,rift valley fever
+2025-08-17,27,rift valley fever
+2025-08-24,27,rift valley fever
+2025-08-31,19,rift valley fever
+2025-09-07,26,rift valley fever
+2025-09-14,19,rift valley fever
+2025-09-21,21,rift valley fever
+2025-09-28,40,rift valley fever
+2025-10-05,50,rift valley fever
+2025-10-12,56,rift valley fever
+2025-10-19,44,rift valley fever
+2025-10-26,30,rift valley fever
+2025-11-02,41,rift valley fever
+2025-11-09,57,rift valley fever
+2025-11-16,64,rift valley fever
+2025-11-23,55,rift valley fever
+2025-11-30,37,rift valley fever
+2025-12-07,28,rift valley fever
+2025-12-14,24,rift valley fever
+2025-12-21,15,rift valley fever
+2025-12-28,16,rift valley fever
+2026-01-04,22,rift valley fever
+2026-01-11,20,rift valley fever
+2026-01-18,29,rift valley fever
+2026-01-25,41,rift valley fever
+2026-02-01,44,rift valley fever
+2026-02-08,37,rift valley fever
+2026-02-15,45,rift valley fever
+2026-02-22,41,rift valley fever
+2026-03-01,21,rift valley fever
+2026-03-08,25,rift valley fever
+2026-03-15,28,rift valley fever
+2026-03-22,41,rift valley fever
+2026-03-29,77,rift valley fever
+2026-04-05,40,rift valley fever
+2026-04-12,57,rift valley fever
+2026-04-19,30,rift valley fever
+2026-04-26,33,rift valley fever
+2026-05-03,34,rift valley fever
+2026-05-10,58,rift valley fever
+2026-05-17,55,rift valley fever
+2026-05-24,51,rift valley fever
+2026-05-31,100,rift valley fever
+2026-06-07,35,rift valley fever
+2026-06-14,36,rift valley fever
+2026-06-21,39,rift valley fever
+2025-06-22,0,nipah virus
+2025-06-29,1,nipah virus
+2025-07-06,1,nipah virus
+2025-07-13,0,nipah virus
+2025-07-20,0,nipah virus
+2025-07-27,0,nipah virus
+2025-08-03,0,nipah virus
+2025-08-10,0,nipah virus
+2025-08-17,0,nipah virus
+2025-08-24,0,nipah virus
+2025-08-31,0,nipah virus
+2025-09-07,0,nipah virus
+2025-09-14,0,nipah virus
+2025-09-21,0,nipah virus
+2025-09-28,0,nipah virus
+2025-10-05,0,nipah virus
+2025-10-12,0,nipah virus
+2025-10-19,0,nipah virus
+2025-10-26,0,nipah virus
+2025-11-02,0,nipah virus
+2025-11-09,0,nipah virus
+2025-11-16,0,nipah virus
+2025-11-23,0,nipah virus
+2025-11-30,0,nipah virus
+2025-12-07,0,nipah virus
+2025-12-14,0,nipah virus
+2025-12-21,0,nipah virus
+2025-12-28,0,nipah virus
+2026-01-04,0,nipah virus
+2026-01-11,2,nipah virus
+2026-01-18,8,nipah virus
+2026-01-25,100,nipah virus
+2026-02-01,27,nipah virus
+2026-02-08,8,nipah virus
+2026-02-15,4,nipah virus
+2026-02-22,2,nipah virus
+2026-03-01,1,nipah virus
+2026-03-08,1,nipah virus
+2026-03-15,1,nipah virus
+2026-03-22,2,nipah virus
+2026-03-29,2,nipah virus
+2026-04-05,1,nipah virus
+2026-04-12,1,nipah virus
+2026-04-19,0,nipah virus
+2026-04-26,1,nipah virus
+2026-05-03,1,nipah virus
+2026-05-10,1,nipah virus
+2026-05-17,1,nipah virus
+2026-05-24,1,nipah virus
+2026-05-31,1,nipah virus
+2026-06-07,1,nipah virus
+2026-06-14,1,nipah virus
+2026-06-21,1,nipah virus

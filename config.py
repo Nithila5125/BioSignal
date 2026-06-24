@@ -40,6 +40,16 @@ DISEASES = [
     "yellow fever",
     "plague",
     "lassa fever",
+    "covid",
+    "hantavirus",
+    "influenza",
+    "measles",
+    "meningitis",
+    "polio",
+    "typhoid",
+    "rift valley fever",
+    "nipah virus",
+    "monkeypox",
 ]
 
 # ── Countries to detect ───────────────────────
