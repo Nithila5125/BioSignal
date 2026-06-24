@@ -153,19 +153,41 @@ def outbreak_relevance_score(text: str) -> int:
 
 def detect_disease(title: str, summary: str) -> str:
     """
-    Detects disease using regex word boundaries.
-    Checks title first (more reliable), then summary.
-    Returns 'unknown' if no match found.
-
-    IMPORTANT: title and summary must be HTML-cleaned before calling.
-    Word boundaries prevent: 'plague' matching 'plagued with issues'
+    Detects disease from title and summary.
+    Checks both exact keywords and related terms.
     """
-    for text in [title, summary]:
-        text_lower = text.lower()
-        for disease, patterns in DISEASE_KEYWORD_MAP.items():
-            for pattern in patterns:
-                if re.search(pattern, text_lower):
-                    return disease
+    text = f"{title} {summary}".lower()
+
+    # Disease keyword map — includes aliases and related terms
+    disease_map = {
+        "ebola":         ["ebola", "ebola virus", "evd"],
+        "marburg":       ["marburg", "marburg virus", "mvd"],
+        "cholera":       ["cholera", "vibrio cholerae"],
+        "dengue":        ["dengue", "dengue fever", "denv"],
+        "mpox":          ["mpox", "monkeypox", "monkey pox"],
+        "yellow fever":  ["yellow fever"],
+        "plague":        ["plague", "yersinia pestis", "bubonic"],
+        "lassa fever":   ["lassa", "lassa fever"],
+        "covid":         ["covid", "covid-19", "sars-cov-2", "coronavirus"],
+        "hantavirus":    ["hantavirus", "hanta virus", "hps",
+                         "hantavirus pulmonary", "tenerife hantavirus",
+                         "hantavirus response"],
+        "influenza":     ["influenza", "flu outbreak", "h5n1", "h1n1",
+                         "avian influenza", "bird flu"],
+        "measles":       ["measles", "rubeola"],
+        "meningitis":    ["meningitis", "meningococcal"],
+        "polio":         ["polio", "poliomyelitis", "poliovirus"],
+        "typhoid":       ["typhoid", "typhoid fever", "salmonella typhi"],
+        "rift valley":   ["rift valley", "rift valley fever", "rvf"],
+        "nipah":         ["nipah", "nipah virus"],
+        "monkeypox":     ["monkeypox", "mpox"],
+    }
+
+    for disease, keywords in disease_map.items():
+        for kw in keywords:
+            if kw in text:
+                return disease
+
     return "unknown"
 
 
