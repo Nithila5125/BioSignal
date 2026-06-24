@@ -1,0 +1,425 @@
+date,search_volume,disease
+2025-06-15,22,cholera
+2025-06-22,19,cholera
+2025-06-29,19,cholera
+2025-07-06,19,cholera
+2025-07-13,20,cholera
+2025-07-20,100,cholera
+2025-07-27,25,cholera
+2025-08-03,26,cholera
+2025-08-10,27,cholera
+2025-08-17,26,cholera
+2025-08-24,27,cholera
+2025-08-31,28,cholera
+2025-09-07,28,cholera
+2025-09-14,26,cholera
+2025-09-21,27,cholera
+2025-09-28,29,cholera
+2025-10-05,28,cholera
+2025-10-12,29,cholera
+2025-10-19,27,cholera
+2025-10-26,26,cholera
+2025-11-02,27,cholera
+2025-11-09,37,cholera
+2025-11-16,48,cholera
+2025-11-23,34,cholera
+2025-11-30,32,cholera
+2025-12-07,33,cholera
+2025-12-14,29,cholera
+2025-12-21,22,cholera
+2025-12-28,23,cholera
+2026-01-04,26,cholera
+2026-01-11,30,cholera
+2026-01-18,29,cholera
+2026-01-25,37,cholera
+2026-02-01,50,cholera
+2026-02-08,49,cholera
+2026-02-15,56,cholera
+2026-02-22,50,cholera
+2026-03-01,32,cholera
+2026-03-08,30,cholera
+2026-03-15,31,cholera
+2026-03-22,32,cholera
+2026-03-29,34,cholera
+2026-04-05,34,cholera
+2026-04-12,29,cholera
+2026-04-19,33,cholera
+2026-04-26,29,cholera
+2026-05-03,35,cholera
+2026-05-10,43,cholera
+2026-05-17,37,cholera
+2026-05-24,35,cholera
+2026-05-31,34,cholera
+2026-06-07,21,cholera
+2026-06-14,22,cholera
+2025-06-15,72,dengue
+2025-06-22,75,dengue
+2025-06-29,73,dengue
+2025-07-06,68,dengue
+2025-07-13,73,dengue
+2025-07-20,74,dengue
+2025-07-27,78,dengue
+2025-08-03,83,dengue
+2025-08-10,96,dengue
+2025-08-17,100,dengue
+2025-08-24,95,dengue
+2025-08-31,97,dengue
+2025-09-07,99,dengue
+2025-09-14,89,dengue
+2025-09-21,94,dengue
+2025-09-28,88,dengue
+2025-10-05,93,dengue
+2025-10-12,100,dengue
+2025-10-19,93,dengue
+2025-10-26,87,dengue
+2025-11-02,90,dengue
+2025-11-09,88,dengue
+2025-11-16,89,dengue
+2025-11-23,87,dengue
+2025-11-30,85,dengue
+2025-12-07,73,dengue
+2025-12-14,68,dengue
+2025-12-21,55,dengue
+2025-12-28,58,dengue
+2026-01-04,64,dengue
+2026-01-11,67,dengue
+2026-01-18,73,dengue
+2026-01-25,76,dengue
+2026-02-01,77,dengue
+2026-02-08,72,dengue
+2026-02-15,70,dengue
+2026-02-22,80,dengue
+2026-03-01,79,dengue
+2026-03-08,79,dengue
+2026-03-15,83,dengue
+2026-03-22,88,dengue
+2026-03-29,82,dengue
+2026-04-05,90,dengue
+2026-04-12,85,dengue
+2026-04-19,76,dengue
+2026-04-26,71,dengue
+2026-05-03,82,dengue
+2026-05-10,84,dengue
+2026-05-17,78,dengue
+2026-05-24,81,dengue
+2026-05-31,72,dengue
+2026-06-07,76,dengue
+2026-06-14,60,dengue
+2025-06-15,58,marburg
+2025-06-22,67,marburg
+2025-06-29,70,marburg
+2025-07-06,71,marburg
+2025-07-13,73,marburg
+2025-07-20,66,marburg
+2025-07-27,65,marburg
+2025-08-03,60,marburg
+2025-08-10,71,marburg
+2025-08-17,73,marburg
+2025-08-24,68,marburg
+2025-08-31,70,marburg
+2025-09-07,65,marburg
+2025-09-14,64,marburg
+2025-09-21,62,marburg
+2025-09-28,67,marburg
+2025-10-05,64,marburg
+2025-10-12,72,marburg
+2025-10-19,75,marburg
+2025-10-26,73,marburg
+2025-11-02,66,marburg
+2025-11-09,71,marburg
+2025-11-16,100,marburg
+2025-11-23,72,marburg
+2025-11-30,69,marburg
+2025-12-07,62,marburg
+2025-12-14,63,marburg
+2025-12-21,51,marburg
+2025-12-28,50,marburg
+2026-01-04,58,marburg
+2026-01-11,64,marburg
+2026-01-18,63,marburg
+2026-01-25,72,marburg
+2026-02-01,75,marburg
+2026-02-08,73,marburg
+2026-02-15,67,marburg
+2026-02-22,62,marburg
+2026-03-01,65,marburg
+2026-03-08,66,marburg
+2026-03-15,68,marburg
+2026-03-22,69,marburg
+2026-03-29,65,marburg
+2026-04-05,64,marburg
+2026-04-12,73,marburg
+2026-04-19,72,marburg
+2026-04-26,66,marburg
+2026-05-03,75,marburg
+2026-05-10,85,marburg
+2026-05-17,82,marburg
+2026-05-24,83,marburg
+2026-05-31,80,marburg
+2026-06-07,62,marburg
+2026-06-14,60,marburg
+2025-06-15,48,yellow fever
+2025-06-22,42,yellow fever
+2025-06-29,44,yellow fever
+2025-07-06,41,yellow fever
+2025-07-13,46,yellow fever
+2025-07-20,44,yellow fever
+2025-07-27,52,yellow fever
+2025-08-03,59,yellow fever
+2025-08-10,64,yellow fever
+2025-08-17,61,yellow fever
+2025-08-24,57,yellow fever
+2025-08-31,57,yellow fever
+2025-09-07,61,yellow fever
+2025-09-14,66,yellow fever
+2025-09-21,56,yellow fever
+2025-09-28,60,yellow fever
+2025-10-05,61,yellow fever
+2025-10-12,66,yellow fever
+2025-10-19,60,yellow fever
+2025-10-26,58,yellow fever
+2025-11-02,62,yellow fever
+2025-11-09,70,yellow fever
+2025-11-16,69,yellow fever
+2025-11-23,64,yellow fever
+2025-11-30,71,yellow fever
+2025-12-07,70,yellow fever
+2025-12-14,59,yellow fever
+2025-12-21,44,yellow fever
+2025-12-28,47,yellow fever
+2026-01-04,54,yellow fever
+2026-01-11,66,yellow fever
+2026-01-18,60,yellow fever
+2026-01-25,64,yellow fever
+2026-02-01,74,yellow fever
+2026-02-08,67,yellow fever
+2026-02-15,84,yellow fever
+2026-02-22,82,yellow fever
+2026-03-01,71,yellow fever
+2026-03-08,76,yellow fever
+2026-03-15,66,yellow fever
+2026-03-22,77,yellow fever
+2026-03-29,89,yellow fever
+2026-04-05,84,yellow fever
+2026-04-12,77,yellow fever
+2026-04-19,75,yellow fever
+2026-04-26,76,yellow fever
+2026-05-03,82,yellow fever
+2026-05-10,100,yellow fever
+2026-05-17,91,yellow fever
+2026-05-24,95,yellow fever
+2026-05-31,81,yellow fever
+2026-06-07,48,yellow fever
+2026-06-14,44,yellow fever
+2025-06-15,30,plague
+2025-06-22,30,plague
+2025-06-29,29,plague
+2025-07-06,60,plague
+2025-07-13,53,plague
+2025-07-20,36,plague
+2025-07-27,35,plague
+2025-08-03,34,plague
+2025-08-10,36,plague
+2025-08-17,100,plague
+2025-08-24,60,plague
+2025-08-31,45,plague
+2025-09-07,46,plague
+2025-09-14,42,plague
+2025-09-21,40,plague
+2025-09-28,40,plague
+2025-10-05,43,plague
+2025-10-12,42,plague
+2025-10-19,44,plague
+2025-10-26,47,plague
+2025-11-02,37,plague
+2025-11-09,39,plague
+2025-11-16,35,plague
+2025-11-23,34,plague
+2025-11-30,39,plague
+2025-12-07,39,plague
+2025-12-14,39,plague
+2025-12-21,39,plague
+2025-12-28,48,plague
+2026-01-04,47,plague
+2026-01-11,45,plague
+2026-01-18,44,plague
+2026-01-25,47,plague
+2026-02-01,62,plague
+2026-02-08,55,plague
+2026-02-15,63,plague
+2026-02-22,54,plague
+2026-03-01,45,plague
+2026-03-08,44,plague
+2026-03-15,44,plague
+2026-03-22,50,plague
+2026-03-29,50,plague
+2026-04-05,49,plague
+2026-04-12,46,plague
+2026-04-19,45,plague
+2026-04-26,50,plague
+2026-05-03,66,plague
+2026-05-10,68,plague
+2026-05-17,52,plague
+2026-05-24,51,plague
+2026-05-31,48,plague
+2026-06-07,39,plague
+2026-06-14,34,plague
+2025-06-15,16,lassa fever
+2025-06-22,20,lassa fever
+2025-06-29,20,lassa fever
+2025-07-06,19,lassa fever
+2025-07-13,19,lassa fever
+2025-07-20,19,lassa fever
+2025-07-27,20,lassa fever
+2025-08-03,22,lassa fever
+2025-08-10,26,lassa fever
+2025-08-17,24,lassa fever
+2025-08-24,23,lassa fever
+2025-08-31,21,lassa fever
+2025-09-07,22,lassa fever
+2025-09-14,23,lassa fever
+2025-09-21,20,lassa fever
+2025-09-28,26,lassa fever
+2025-10-05,23,lassa fever
+2025-10-12,25,lassa fever
+2025-10-19,23,lassa fever
+2025-10-26,21,lassa fever
+2025-11-02,22,lassa fever
+2025-11-09,20,lassa fever
+2025-11-16,27,lassa fever
+2025-11-23,24,lassa fever
+2025-11-30,31,lassa fever
+2025-12-07,19,lassa fever
+2025-12-14,15,lassa fever
+2025-12-21,13,lassa fever
+2025-12-28,12,lassa fever
+2026-01-04,15,lassa fever
+2026-01-11,19,lassa fever
+2026-01-18,24,lassa fever
+2026-01-25,24,lassa fever
+2026-02-01,93,lassa fever
+2026-02-08,100,lassa fever
+2026-02-15,79,lassa fever
+2026-02-22,69,lassa fever
+2026-03-01,42,lassa fever
+2026-03-08,39,lassa fever
+2026-03-15,34,lassa fever
+2026-03-22,41,lassa fever
+2026-03-29,43,lassa fever
+2026-04-05,50,lassa fever
+2026-04-12,57,lassa fever
+2026-04-19,40,lassa fever
+2026-04-26,45,lassa fever
+2026-05-03,46,lassa fever
+2026-05-10,64,lassa fever
+2026-05-17,44,lassa fever
+2026-05-24,44,lassa fever
+2026-05-31,39,lassa fever
+2026-06-07,20,lassa fever
+2026-06-14,22,lassa fever
+2025-06-15,1,ebola
+2025-06-22,1,ebola
+2025-06-29,1,ebola
+2025-07-06,1,ebola
+2025-07-13,1,ebola
+2025-07-20,1,ebola
+2025-07-27,1,ebola
+2025-08-03,1,ebola
+2025-08-10,1,ebola
+2025-08-17,1,ebola
+2025-08-24,1,ebola
+2025-08-31,2,ebola
+2025-09-07,2,ebola
+2025-09-14,2,ebola
+2025-09-21,2,ebola
+2025-09-28,2,ebola
+2025-10-05,2,ebola
+2025-10-12,2,ebola
+2025-10-19,2,ebola
+2025-10-26,2,ebola
+2025-11-02,1,ebola
+2025-11-09,2,ebola
+2025-11-16,2,ebola
+2025-11-23,2,ebola
+2025-11-30,2,ebola
+2025-12-07,1,ebola
+2025-12-14,1,ebola
+2025-12-21,1,ebola
+2025-12-28,1,ebola
+2026-01-04,1,ebola
+2026-01-11,2,ebola
+2026-01-18,2,ebola
+2026-01-25,2,ebola
+2026-02-01,2,ebola
+2026-02-08,2,ebola
+2026-02-15,3,ebola
+2026-02-22,2,ebola
+2026-03-01,2,ebola
+2026-03-08,2,ebola
+2026-03-15,2,ebola
+2026-03-22,2,ebola
+2026-03-29,3,ebola
+2026-04-05,2,ebola
+2026-04-12,2,ebola
+2026-04-19,2,ebola
+2026-04-26,2,ebola
+2026-05-03,3,ebola
+2026-05-10,7,ebola
+2026-05-17,100,ebola
+2026-05-24,57,ebola
+2026-05-31,33,ebola
+2026-06-07,13,ebola
+2026-06-14,9,ebola
+2025-06-15,10,mpox
+2025-06-22,7,mpox
+2025-06-29,5,mpox
+2025-07-06,5,mpox
+2025-07-13,6,mpox
+2025-07-20,8,mpox
+2025-07-27,8,mpox
+2025-08-03,7,mpox
+2025-08-10,8,mpox
+2025-08-17,8,mpox
+2025-08-24,7,mpox
+2025-08-31,9,mpox
+2025-09-07,8,mpox
+2025-09-14,7,mpox
+2025-09-21,8,mpox
+2025-09-28,9,mpox
+2025-10-05,8,mpox
+2025-10-12,9,mpox
+2025-10-19,11,mpox
+2025-10-26,7,mpox
+2025-11-02,6,mpox
+2025-11-09,5,mpox
+2025-11-16,5,mpox
+2025-11-23,5,mpox
+2025-11-30,4,mpox
+2025-12-07,7,mpox
+2025-12-14,4,mpox
+2025-12-21,3,mpox
+2025-12-28,3,mpox
+2026-01-04,6,mpox
+2026-01-11,6,mpox
+2026-01-18,6,mpox
+2026-01-25,7,mpox
+2026-02-01,6,mpox
+2026-02-08,5,mpox
+2026-02-15,100,mpox
+2026-02-22,85,mpox
+2026-03-01,21,mpox
+2026-03-08,19,mpox
+2026-03-15,13,mpox
+2026-03-22,9,mpox
+2026-03-29,9,mpox
+2026-04-05,9,mpox
+2026-04-12,8,mpox
+2026-04-19,9,mpox
+2026-04-26,9,mpox
+2026-05-03,8,mpox
+2026-05-10,9,mpox
+2026-05-17,8,mpox
+2026-05-24,10,mpox
+2026-05-31,8,mpox
+2026-06-07,5,mpox
+2026-06-14,4,mpox
