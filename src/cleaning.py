@@ -49,6 +49,7 @@ def clean_who_data() -> pd.DataFrame:
     - Remove rows with no disease or date
     - Add month and year columns for merging with Trends
     - Ensure escalated label is 0 or 1
+    - KEEP title, summary, link columns for Phase 5 NLP
     """
     log.info("─" * 55)
     log.info("STEP 1 — Cleaning WHO Historical Data")
@@ -62,16 +63,16 @@ def clean_who_data() -> pd.DataFrame:
 
     df = pd.read_csv(path)
     log.info(f"  Loaded {len(df)} rows")
+    log.info(f"  Columns: {df.columns.tolist()}")
 
     # ── Fix dates ─────────────────────────────────────────────
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
 
-    # Drop rows where date couldn't be parsed
     before = len(df)
     df = df.dropna(subset=["date"]).reset_index(drop=True)
     log.info(f"  Dropped {before - len(df)} rows with unparseable dates")
 
-    # Add year, month, week columns — needed for merging with Trends
+    # Add year, month, week columns
     df["year"]  = df["date"].dt.year
     df["month"] = df["date"].dt.month
     df["week"]  = df["date"].dt.isocalendar().week.astype(int)
@@ -79,7 +80,6 @@ def clean_who_data() -> pd.DataFrame:
     # ── Fix disease column ────────────────────────────────────
     df["disease"] = df["disease"].str.lower().str.strip()
 
-    # Drop rows with no disease
     before = len(df)
     df = df[df["disease"] != "unknown"].reset_index(drop=True)
     df = df[df["disease"].notna()].reset_index(drop=True)
@@ -98,7 +98,9 @@ def clean_who_data() -> pd.DataFrame:
     # ── Fix numeric columns ───────────────────────────────────
     for col in ["cases_total", "deaths", "outbreak_relevance_score"]:
         if col in df.columns:
-            df[col] = pd.to_numeric(df[col], errors="coerce").fillna(0).astype(int)
+            df[col] = pd.to_numeric(
+                df[col], errors="coerce"
+            ).fillna(0).astype(int)
         else:
             df[col] = 0
 
@@ -110,10 +112,11 @@ def clean_who_data() -> pd.DataFrame:
 
     # ── Add severity as numeric ───────────────────────────────
     severity_map = {"low": 0, "medium": 1, "high": 2}
-    df["severity_score"] = df["severity"].map(severity_map).fillna(0).astype(int)
+    df["severity_score"] = df["severity"].map(
+        severity_map
+    ).fillna(0).astype(int)
 
     # ── Add season column ─────────────────────────────────────
-    # Useful feature — many diseases are seasonal
     def get_season(month):
         if month in [12, 1, 2]:  return "winter"
         if month in [3, 4, 5]:   return "spring"
@@ -122,18 +125,31 @@ def clean_who_data() -> pd.DataFrame:
 
     df["season"] = df["month"].apply(get_season)
 
+    # ── Clean text columns if they exist ─────────────────────
+    # These come from WHO RSS articles (not Georgetown DON)
+    # Georgetown DON data has no title/summary — that's OK
+    for text_col in ["title", "summary"]:
+        if text_col in df.columns:
+            df[text_col] = df[text_col].fillna("").astype(str).str.strip()
+            log.info(f"  Text column '{text_col}' found and cleaned")
+        else:
+            log.info(f"  Text column '{text_col}' not found — NLP will use fallback")
+
     # ── Final column selection ────────────────────────────────
+    # Keep text columns when available — needed for Phase 5 NLP
     keep_cols = [
         "date", "year", "month", "week", "season",
         "disease", "country", "severity", "severity_score",
         "outbreak_relevance_score", "cases_total", "deaths",
         "escalated", "source",
+        "title", "summary", "link",   # keep real text for NLP
     ]
-    # Only keep columns that exist
+    # Only keep columns that actually exist in the dataframe
     keep_cols = [c for c in keep_cols if c in df.columns]
     df = df[keep_cols]
 
     log.info(f"  Clean WHO rows       : {len(df)}")
+    log.info(f"  Final columns        : {df.columns.tolist()}")
     log.info(f"  Date range           : {df['date'].min().date()} → {df['date'].max().date()}")
     log.info(f"  Diseases             : {sorted(df['disease'].unique().tolist())}")
     log.info(f"  Escalated (1)        : {df['escalated'].sum()}")
@@ -191,35 +207,26 @@ def clean_trends_data() -> pd.DataFrame:
     df = df.sort_values(["disease", "date"]).reset_index(drop=True)
 
     # ── Calculate spike ratio per disease ─────────────────────
-    # This is the KEY novel feature:
-    # spike_ratio = this week / 12-week rolling average
-    # spike_ratio > 2.0 means search volume doubled = early warning
-
-    spike_ratios  = []
-    baselines     = []
+    spike_ratios = []
+    baselines    = []
 
     for disease in df["disease"].unique():
         mask   = df["disease"] == disease
         subset = df[mask].copy()
 
-        # 12-week rolling average as baseline
         baseline = subset["search_volume"].rolling(
             window=12, min_periods=1
         ).mean()
-
-        # Avoid division by zero
         baseline = baseline.replace(0, 1)
-
-        # Spike ratio
-        ratio = subset["search_volume"] / baseline
+        ratio    = subset["search_volume"] / baseline
 
         spike_ratios.extend(ratio.tolist())
         baselines.extend(baseline.tolist())
 
-    df["baseline_avg"]  = baselines
-    df["spike_ratio"]   = spike_ratios
-    df["spike_ratio"]   = df["spike_ratio"].round(2)
-    df["baseline_avg"]  = df["baseline_avg"].round(1)
+    df["baseline_avg"] = baselines
+    df["spike_ratio"]  = spike_ratios
+    df["spike_ratio"]  = df["spike_ratio"].round(2)
+    df["baseline_avg"] = df["baseline_avg"].round(1)
 
     # ── Add spike level label ─────────────────────────────────
     def get_spike_level(ratio):
@@ -249,17 +256,8 @@ def merge_who_and_trends(
 ) -> pd.DataFrame:
     """
     Merges WHO outbreak records with Google Trends data.
-
-    Merge strategy:
-    - WHO data is per outbreak event (one row per event)
-    - Trends data is weekly (one row per disease per week)
-    - We merge on disease + year + month
-    - We take the MAX spike ratio for that month
-      (captures the peak search interest around the outbreak)
-
-    Why month-level merge:
-    - WHO reports don't always have exact outbreak start dates
-    - Month-level is more robust than week-level
+    Merges on disease + year + month (monthly level).
+    Keeps all WHO rows even if no Trends match.
     """
     log.info("\n" + "─" * 55)
     log.info("STEP 3 — Merging WHO + Trends Data")
@@ -269,16 +267,16 @@ def merge_who_and_trends(
         log.warning("  One or both dataframes empty — skipping merge")
         return who_df
 
-    # ── Aggregate Trends to monthly level ─────────────────────
+    # Aggregate Trends to monthly level
     trends_monthly = trends_df.groupby(
         ["disease", "year", "month"]
     ).agg(
-        search_volume_avg  = ("search_volume", "mean"),
-        search_volume_max  = ("search_volume", "max"),
-        spike_ratio_max    = ("spike_ratio",   "max"),
-        spike_ratio_avg    = ("spike_ratio",   "mean"),
-        spike_level_top    = ("spike_level",   lambda x: x.value_counts().index[0]),
-        baseline_avg       = ("baseline_avg",  "mean"),
+        search_volume_avg = ("search_volume", "mean"),
+        search_volume_max = ("search_volume", "max"),
+        spike_ratio_max   = ("spike_ratio",   "max"),
+        spike_ratio_avg   = ("spike_ratio",   "mean"),
+        spike_level_top   = ("spike_level",   lambda x: x.value_counts().index[0]),
+        baseline_avg      = ("baseline_avg",  "mean"),
     ).reset_index()
 
     trends_monthly["search_volume_avg"] = trends_monthly["search_volume_avg"].round(1)
@@ -288,17 +286,14 @@ def merge_who_and_trends(
     log.info(f"  WHO rows             : {len(who_df)}")
     log.info(f"  Trends monthly rows  : {len(trends_monthly)}")
 
-    # ── Merge ─────────────────────────────────────────────────
     merged = pd.merge(
         who_df,
         trends_monthly,
         on=["disease", "year", "month"],
-        how="left",   # keep all WHO rows even if no Trends match
+        how="left",
     )
 
-    # ── Fill missing Trends values ────────────────────────────
-    # Not all diseases/dates have Trends data
-    # Fill with 0 for volumes, 1.0 for ratios (neutral)
+    # Fill missing Trends values
     trends_cols = [
         "search_volume_avg", "search_volume_max",
         "spike_ratio_max", "spike_ratio_avg", "baseline_avg",
@@ -323,8 +318,7 @@ def merge_who_and_trends(
 def validate_and_save(df: pd.DataFrame) -> pd.DataFrame:
     """
     Final validation before saving.
-    Checks column types, removes any remaining nulls in key columns,
-    prints a data quality report, saves to features_clean.csv
+    Saves to features_clean.csv
     """
     log.info("\n" + "─" * 55)
     log.info("STEP 4 — Validation + Save")
@@ -334,26 +328,25 @@ def validate_and_save(df: pd.DataFrame) -> pd.DataFrame:
         log.error("  Empty dataframe — nothing to save")
         return df
 
-    # ── Ensure key columns exist ──────────────────────────────
+    # Ensure required columns exist
     required = [
         "date", "disease", "country", "severity_score",
         "cases_total", "deaths", "outbreak_relevance_score",
         "escalated",
     ]
-    missing_cols = [c for c in required if c not in df.columns]
-    if missing_cols:
-        log.warning(f"  Missing columns: {missing_cols} — filling with 0")
-        for col in missing_cols:
+    for col in required:
+        if col not in df.columns:
+            log.warning(f"  Missing column: {col} — filling with 0")
             df[col] = 0
 
-    # ── Final null check on key columns ──────────────────────
+    # Final null check
     for col in required:
         null_count = df[col].isnull().sum()
         if null_count > 0:
             log.warning(f"  {col} has {null_count} nulls — filling")
             df[col] = df[col].fillna(0)
 
-    # ── Ensure correct types ──────────────────────────────────
+    # Ensure correct types
     int_cols = [
         "cases_total", "deaths", "outbreak_relevance_score",
         "escalated", "severity_score", "year", "month",
@@ -374,20 +367,19 @@ def validate_and_save(df: pd.DataFrame) -> pd.DataFrame:
                 df[col], errors="coerce"
             ).fillna(0.0).astype(float)
 
-    # ── Sort by date descending ───────────────────────────────
+    # Sort newest first
     df = df.sort_values("date", ascending=False).reset_index(drop=True)
 
-    # ── Save ──────────────────────────────────────────────────
+    # Save
     config.PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     out_path = config.PROCESSED_DIR / "features_clean.csv"
     df.to_csv(out_path, index=False)
 
-    # ── Data quality report ───────────────────────────────────
+    # Report
     log.info(f"\n  ── Data Quality Report ────────────────────")
     log.info(f"  Total rows           : {len(df)}")
     log.info(f"  Total columns        : {len(df.columns)}")
     log.info(f"  Columns              : {df.columns.tolist()}")
-    log.info(f"  Date range           : {df['date'].min()} → {df['date'].max()}")
     log.info(f"  Null values          : {df.isnull().sum().sum()}")
     log.info(f"  Escalated (1)        : {df['escalated'].sum()}")
     log.info(f"  Contained (0)        : {(df['escalated']==0).sum()}")
@@ -411,16 +403,9 @@ def main():
     print(f"  {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     print("═" * 55 + "\n")
 
-    # Step 1 — Clean WHO data
     who_df    = clean_who_data()
-
-    # Step 2 — Clean Trends data
     trends_df = clean_trends_data()
-
-    # Step 3 — Merge
     merged_df = merge_who_and_trends(who_df, trends_df)
-
-    # Step 4 — Validate and save
     final_df  = validate_and_save(merged_df)
 
     print("\n" + "═" * 55)
@@ -428,9 +413,10 @@ def main():
     print("═" * 55)
     print(f"  Clean rows             : {len(final_df)}")
     print(f"  Columns                : {len(final_df.columns)}")
+    print(f"  Has title column       : {'title' in final_df.columns}")
+    print(f"  Has summary column     : {'summary' in final_df.columns}")
     print(f"  Escalated (label=1)    : {int(final_df['escalated'].sum())}")
     print(f"  Contained (label=0)    : {int((final_df['escalated']==0).sum())}")
-    print(f"  Has Trends data        : {int(final_df['search_volume_avg'].gt(0).sum())} rows")
     print(f"\n  Output:")
     print(f"    data/processed/features_clean.csv")
     print(f"\n  Next step: Phase 5 — NLP Pipeline")
