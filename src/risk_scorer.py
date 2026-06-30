@@ -88,7 +88,6 @@ DISEASE_ORDER = [
     "yellow fever",
 ]
 
-# Known location aliases — maps text mentions to clean country names
 LOCATION_ALIASES = {
     "tenerife":           "Spain (Tenerife)",
     "canary islands":     "Spain (Canary Islands)",
@@ -154,26 +153,139 @@ def get_confidence_band(prob: float) -> str:
 
 
 def get_top_risk_reason(
+    risk_level: str,
     urgency_score: int,
     spike_ratio: float,
     is_peak: int,
     disease_risk: float,
     disease_count: int,
+    dc_count: int,
     net_urgency: int,
-) -> str:
-    if urgency_score >= 3 and disease_risk >= 0.7:
-        return "High NLP urgency and disease risk"
-    if spike_ratio >= config.SPIKE_RATIO_HIGH:
-        return "Google Trends spike detected"
-    if spike_ratio >= config.SPIKE_RATIO_MEDIUM:
-        return "Elevated search volume trend"
-    if is_peak and disease_risk >= 0.6:
-        return "Seasonal risk and outbreak frequency"
-    if disease_count >= 50 and disease_risk >= 0.6:
-        return "Strong disease/location historical pattern"
-    if urgency_score >= 2 or net_urgency > 0:
-        return "Moderate early-warning signal"
-    return "Low current early-warning signal"
+    escalation_flag: int,
+) -> tuple:
+    """
+    Returns: (reason_text, reason_primary_signal, reason_secondary_signal, reason_scope)
+
+    Branches by risk_level FIRST, then picks the strongest signal within
+    that tier's appropriate vocabulary. This prevents Low Risk articles
+    from getting the same scary language as Critical Risk articles just
+    because the underlying disease has a high disease-level spike.
+    """
+
+    has_spike       = spike_ratio >= config.SPIKE_RATIO_HIGH
+    has_mod_spike   = spike_ratio >= config.SPIKE_RATIO_MEDIUM
+    has_urgency     = urgency_score >= 3
+    has_mod_urgency = urgency_score >= 2 or net_urgency > 0
+    has_history     = dc_count >= 3
+    has_mod_history = disease_count >= 50 and disease_risk >= 0.6
+    has_season      = is_peak and disease_risk >= 0.6
+
+    # ── CRITICAL RISK (score >= 81) ──────────────────────────
+    if risk_level == "Critical Risk":
+        if has_urgency and has_spike:
+            return (
+                "Critical model-based risk driven by urgency language, "
+                "disease risk, and elevated search activity",
+                "article_urgency", "google_trends_spike", "article_level",
+            )
+        if has_urgency and has_history:
+            return (
+                "Strong urgency language, high disease risk profile, "
+                "and repeated outbreak history",
+                "article_urgency", "disease_country_history", "article_level",
+            )
+        if has_urgency:
+            return (
+                "Strong urgency language and high disease risk profile",
+                "article_urgency", "disease_risk_profile", "article_level",
+            )
+        return (
+            "Critical model-based risk from combined disease and "
+            "outbreak-history signals",
+            "disease_risk_profile", "disease_country_history", "article_level",
+        )
+
+    # ── HIGH RISK (61-80) ─────────────────────────────────────
+    if risk_level == "High Risk":
+        if has_urgency:
+            return (
+                "High model-based risk from urgency language, disease "
+                "profile, and outbreak history",
+                "article_urgency", "disease_risk_profile", "article_level",
+            )
+        if has_history:
+            return (
+                "Elevated outbreak signal from article urgency and "
+                "historical disease-country pattern",
+                "disease_country_history", "article_urgency", "article_level",
+            )
+        if has_spike:
+            return (
+                "High model-based risk supported by elevated Google "
+                "Trends search activity",
+                "google_trends_spike", "disease_risk_profile", "article_level",
+            )
+        return (
+            "High model-based risk from disease risk profile and "
+            "outbreak history",
+            "disease_risk_profile", "disease_country_history", "article_level",
+        )
+
+    # ── MEDIUM RISK (31-60) ───────────────────────────────────
+    if risk_level == "Medium Risk":
+        if has_spike:
+            return (
+                "Moderate signal from Google Trends activity and "
+                "disease risk profile",
+                "google_trends_spike", "disease_risk_profile",
+                "article_level_with_disease_context",
+            )
+        if has_mod_urgency:
+            return (
+                "Moderate early-warning signal with elevated disease-"
+                "level search activity",
+                "article_urgency", "google_trends_spike",
+                "article_level_with_disease_context",
+            )
+        if has_mod_history:
+            return (
+                "Moderate signal from disease outbreak frequency and "
+                "country pattern",
+                "disease_country_history", "disease_risk_profile",
+                "article_level_with_disease_context",
+            )
+        if has_season:
+            return (
+                "Moderate seasonal disease risk signal",
+                "seasonal_pattern", "disease_risk_profile",
+                "article_level_with_disease_context",
+            )
+        return (
+            "Moderate early-warning signal from available features",
+            "disease_risk_profile", "article_urgency",
+            "article_level_with_disease_context",
+        )
+
+    # ── LOW RISK (< 31) — calm language only, never "high spike" ──
+    if has_spike or has_mod_spike:
+        return (
+            "Low article-level risk despite elevated disease-level "
+            "search activity",
+            "weak_article_urgency", "disease_level_spike",
+            "article_level_with_disease_context",
+        )
+    if escalation_flag == 0 and urgency_score <= 1:
+        return (
+            "Low model-based risk; article contains limited escalation "
+            "indicators",
+            "weak_article_urgency", "low_escalation_language",
+            "article_level",
+        )
+    return (
+        "Routine monitoring signal with weak article-level urgency",
+        "weak_article_urgency", "routine_monitoring",
+        "article_level",
+    )
 
 
 def fix_country(country: str, title: str, summary: str) -> str:
@@ -190,6 +302,56 @@ def fix_country(country: str, title: str, summary: str) -> str:
             return clean_name
 
     return "Unknown"
+
+
+# ═══════════════════════════════════════════════════════════════
+# SHARED SPIKE CALCULATION
+# ═══════════════════════════════════════════════════════════════
+
+def calculate_disease_spike(disease: str, trends_df: pd.DataFrame) -> dict:
+    """
+    Single source of truth for spike ratio calculation.
+    Used by both risk_scores.csv and early_warnings.csv so the
+    displayed spike ratio is always consistent across files.
+    """
+    result = {
+        "latest_search_volume":     0.0,
+        "recent_search_volume_avg": 0.0,
+        "baseline_avg":             0.0,
+        "latest_spike_ratio":       0.0,
+        "recent_avg_spike_ratio":   0.0,
+        "spike_ratio_used":         0.0,
+        "spike_method":             "recent_4_record_average_vs_baseline",
+    }
+
+    if trends_df.empty or disease not in trends_df["disease"].values:
+        return result
+
+    d_trends = trends_df[trends_df["disease"] == disease].sort_values("date")
+
+    if d_trends.empty:
+        return result
+
+    baseline_avg = d_trends["search_volume"].mean()
+    baseline_avg = max(baseline_avg, 1)  # safe division
+
+    recent_4 = d_trends.tail(4)
+    recent_search_volume_avg = recent_4["search_volume"].mean()
+    latest_search_volume     = d_trends["search_volume"].iloc[-1]
+
+    latest_spike_ratio     = round(latest_search_volume / baseline_avg, 2)
+    recent_avg_spike_ratio = round(recent_search_volume_avg / baseline_avg, 2)
+
+    result.update({
+        "latest_search_volume":     round(float(latest_search_volume), 1),
+        "recent_search_volume_avg": round(float(recent_search_volume_avg), 1),
+        "baseline_avg":             round(float(baseline_avg), 1),
+        "latest_spike_ratio":       latest_spike_ratio,
+        "recent_avg_spike_ratio":   recent_avg_spike_ratio,
+        "spike_ratio_used":         recent_avg_spike_ratio,
+    })
+
+    return result
 
 
 # ═══════════════════════════════════════════════════════════════
@@ -254,12 +416,18 @@ def build_features_for_row(
     """
     Builds exact same features as Phase 6 for one live row.
     All missing values filled with 0.
+
+    NOTE: spike_ratio_max / spike_ratio_avg here are the ML
+    MODEL'S input features (trained on this exact definition during
+    Phase 6/7) and are intentionally kept separate from the
+    DISPLAY spike ratio used in risk_scores.csv / early_warnings.csv
+    (see calculate_disease_spike()). Changing this would require
+    retraining the model, which is out of scope for this fix.
     """
     disease = str(row.get("disease", "") or "").lower().strip()
     title   = str(row.get("title",   "") or "")
     summary = str(row.get("summary", "") or "")
 
-    # Fix unknown country using location aliases
     raw_country = str(row.get("country", "") or "").strip()
     country     = fix_country(raw_country, title, summary)
 
@@ -274,7 +442,6 @@ def build_features_for_row(
         month = now.month
         week  = int(now.isocalendar()[1])
 
-    # Season encoding
     if month in [12,1,2]:   season = 0
     elif month in [3,4,5]:  season = 1
     elif month in [6,7,8]:  season = 2
@@ -282,7 +449,6 @@ def build_features_for_row(
 
     text = f"{title} {summary}".strip() or f"{disease} in {country}."
 
-    # NLP
     doc       = nlp(text[:500])
     locations = [e.text for e in doc.ents if e.label_ in ("GPE","LOC")]
     orgs      = [e.text for e in doc.ents if e.label_ == "ORG"]
@@ -302,7 +468,6 @@ def build_features_for_row(
     net_urgency       = urgency_score - containment_score
     escalation_flag   = 1 if (urgency_score >= 2 and net_urgency > 0) else 0
 
-    # Trends
     spike_ratio_max = 0.0
     spike_ratio_avg = 0.0
     search_vol_avg  = 0.0
@@ -327,7 +492,6 @@ def build_features_for_row(
         elif spike_ratio_max >= config.SPIKE_RATIO_LOW:
             spike_level_enc = 1
 
-    # Disease profile
     disease_risk    = DISEASE_RISK_PROFILE.get(disease, 0.5)
     fatality_weight = DISEASE_FATALITY_WEIGHT.get(disease, 0.4)
     is_peak         = 1 if month in DISEASE_PEAK_MONTHS.get(disease, []) else 0
@@ -335,7 +499,6 @@ def build_features_for_row(
     disease_encoded = DISEASE_ORDER.index(disease) \
                       if disease in DISEASE_ORDER else -1
 
-    # Frequency from historical data
     disease_count = int((hist_df["disease"] == disease).sum()) \
                     if not hist_df.empty else 1
     country_count = int((hist_df["country"] == country).sum()) \
@@ -414,10 +577,7 @@ def detect_early_warnings(
     if trends_df.empty:
         return pd.DataFrame()
 
-    latest   = trends_df.sort_values("date").groupby("disease").last().reset_index()
-    baseline = trends_df.groupby("disease")["search_volume"].mean()
-    latest["baseline"]    = latest["disease"].map(baseline).replace(0, 1)
-    latest["spike_ratio"] = (latest["search_volume"] / latest["baseline"]).round(2)
+    diseases = sorted(trends_df["disease"].dropna().unique().tolist())
 
     who_diseases = set()
     if not who_df.empty and "disease" in who_df.columns:
@@ -433,32 +593,38 @@ def detect_early_warnings(
             who_diseases = set(who_df["disease"].dropna().str.lower().unique())
 
     rows = []
-    for _, row in latest.iterrows():
-        disease     = row["disease"]
-        spike_ratio = row["spike_ratio"]
-        search_vol  = row["search_volume"]
-        who_rep     = disease in who_diseases
+    for disease in diseases:
+        spike = calculate_disease_spike(disease, trends_df)
+        spike_ratio_used = spike["spike_ratio_used"]
+        who_rep = disease in who_diseases
 
-        if spike_ratio >= config.SPIKE_RATIO_LOW:
-            if spike_ratio >= config.SPIKE_RATIO_HIGH:
+        if spike_ratio_used >= config.SPIKE_RATIO_LOW:
+            if spike_ratio_used >= config.SPIKE_RATIO_HIGH:
                 signal_level = "Alert"
-            elif spike_ratio >= config.SPIKE_RATIO_MEDIUM:
+            elif spike_ratio_used >= config.SPIKE_RATIO_MEDIUM:
                 signal_level = "Warning"
             else:
                 signal_level = "Watch"
 
             rows.append({
-                "disease":       disease,
-                "search_volume": search_vol,
-                "spike_ratio":   spike_ratio,
-                "signal_level":  signal_level,
-                "who_reported":  who_rep,
-                "early_warning": not who_rep,
-                "date_checked":  datetime.now().strftime("%Y-%m-%d"),
+                "disease":                  disease,
+                "search_volume":            spike["latest_search_volume"],
+                "latest_search_volume":     spike["latest_search_volume"],
+                "recent_search_volume_avg": spike["recent_search_volume_avg"],
+                "baseline_avg":             spike["baseline_avg"],
+                "latest_spike_ratio":       spike["latest_spike_ratio"],
+                "recent_avg_spike_ratio":   spike["recent_avg_spike_ratio"],
+                "spike_ratio_used":         spike_ratio_used,
+                "spike_ratio":              spike_ratio_used,
+                "spike_method":             spike["spike_method"],
+                "signal_level":             signal_level,
+                "who_reported":             who_rep,
+                "early_warning":            not who_rep,
+                "date_checked":             datetime.now().strftime("%Y-%m-%d"),
             })
 
     return pd.DataFrame(rows).sort_values(
-        "spike_ratio", ascending=False
+        "spike_ratio_used", ascending=False
     ).reset_index(drop=True)
 
 
@@ -540,15 +706,9 @@ def run_risk_scorer() -> pd.DataFrame:
                 risk_level = get_risk_level(risk_score)
                 confidence = get_confidence_band(risk_prob)
 
-                # Spike ratio
-                spike_ratio = 0.0
-                has_spike   = False
-                if not trends_df.empty and disease in trends_df["disease"].values:
-                    d_t         = trends_df[trends_df["disease"] == disease]
-                    recent_vol  = d_t.sort_values("date").tail(4)["search_volume"].mean()
-                    base        = max(d_t["search_volume"].mean(), 1)
-                    spike_ratio = round(recent_vol / base, 2)
-                    has_spike   = spike_ratio >= config.SPIKE_RATIO_LOW
+                spike = calculate_disease_spike(disease, trends_df)
+                spike_ratio_used = spike["spike_ratio_used"]
+                has_spike = spike_ratio_used >= config.SPIKE_RATIO_LOW
 
                 month_now    = pd.to_datetime(
                     row.get("date", datetime.today()), errors="coerce"
@@ -557,40 +717,58 @@ def run_risk_scorer() -> pd.DataFrame:
                 disease_risk = DISEASE_RISK_PROFILE.get(disease, 0.5)
                 disease_count= int((hist_df["disease"] == disease).sum()) \
                                if not hist_df.empty else 1
-                urgency_text = str(row.get("title","")) + " " + str(row.get("summary",""))
-                urgency_val  = keyword_score(urgency_text, URGENCY_WORDS)
-                net_urg      = urgency_val - keyword_score(urgency_text, CONTAINMENT_WORDS)
 
-                top_reason = get_top_risk_reason(
-                    urgency_val, spike_ratio, is_peak_val,
-                    disease_risk, disease_count, net_urg
-                )
-
-                # Fix country
                 raw_country = str(row.get("country", "unknown"))
                 country     = fix_country(
                     raw_country,
                     str(row.get("title",   "")),
                     str(row.get("summary", "")),
                 )
+                dc_count = int(
+                    ((hist_df["disease"] == disease) &
+                     (hist_df["country"] == country)).sum()
+                ) if not hist_df.empty else 0
+
+                urgency_text    = str(row.get("title","")) + " " + str(row.get("summary",""))
+                urgency_val     = keyword_score(urgency_text, URGENCY_WORDS)
+                containment_val = keyword_score(urgency_text, CONTAINMENT_WORDS)
+                net_urg         = urgency_val - containment_val
+                escalation_flag = 1 if (urgency_val >= 2 and net_urg > 0) else 0
+
+                top_reason, reason_primary, reason_secondary, reason_scope = \
+                    get_top_risk_reason(
+                        risk_level, urgency_val, spike_ratio_used, is_peak_val,
+                        disease_risk, disease_count, dc_count, net_urg,
+                        escalation_flag,
+                    )
 
                 scored_rows.append({
-                    "date":                   str(row.get("date",    "")),
-                    "disease":                disease,
-                    "country":                country,
-                    "severity":               str(row.get("severity","low")),
-                    "source":                 str(row.get("source",  "")),
-                    "title":                  str(row.get("title",   ""))[:120],
-                    "summary":                str(row.get("summary", ""))[:200],
-                    "escalation_probability": round(risk_prob, 4),
-                    "risk_score":             risk_score,
-                    "risk_level":             risk_level,
-                    "predicted_escalated":    predicted,
-                    "confidence_band":        confidence,
-                    "top_risk_reason":        top_reason,
-                    "spike_ratio":            spike_ratio,
-                    "has_spike":              has_spike,
-                    "scored_at":              datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    "date":                      str(row.get("date",    "")),
+                    "disease":                   disease,
+                    "country":                   country,
+                    "severity":                  str(row.get("severity","low")),
+                    "source":                    str(row.get("source",  "")),
+                    "title":                     str(row.get("title",   ""))[:120],
+                    "summary":                   str(row.get("summary", ""))[:200],
+                    "escalation_probability":    round(risk_prob, 4),
+                    "risk_score":                risk_score,
+                    "risk_level":                risk_level,
+                    "predicted_escalated":       predicted,
+                    "confidence_band":           confidence,
+                    "top_risk_reason":           top_reason,
+                    "reason_primary_signal":     reason_primary,
+                    "reason_secondary_signal":   reason_secondary,
+                    "reason_scope":              reason_scope,
+                    "latest_search_volume":      spike["latest_search_volume"],
+                    "recent_search_volume_avg":  spike["recent_search_volume_avg"],
+                    "baseline_avg":              spike["baseline_avg"],
+                    "latest_spike_ratio":        spike["latest_spike_ratio"],
+                    "recent_avg_spike_ratio":    spike["recent_avg_spike_ratio"],
+                    "spike_ratio_used":          spike_ratio_used,
+                    "spike_ratio":               spike_ratio_used,
+                    "spike_method":              spike["spike_method"],
+                    "has_spike":                 has_spike,
+                    "scored_at":                 datetime.now().strftime("%Y-%m-%d %H:%M"),
                 })
 
             except Exception as e:
@@ -624,10 +802,52 @@ def run_risk_scorer() -> pd.DataFrame:
             status = "⚡ NO WHO REPORT YET" if r["early_warning"] else "✓ WHO confirmed"
             log.info(
                 f"    [{r['signal_level']}]  {r['disease']:<15} "
-                f"spike={r['spike_ratio']}x  {status}"
+                f"spike={r['spike_ratio_used']}x  {status}"
             )
     else:
         log.info("  No spike signals above threshold")
+
+    log.info("\n" + "─" * 55)
+    log.info("STEP 4b — Spike Consistency Check")
+    log.info("─" * 55)
+
+    if not scored_df.empty and not ew_df.empty:
+        rs_spikes = scored_df.groupby("disease")["spike_ratio_used"].first()
+        ew_spikes = ew_df.set_index("disease")["spike_ratio_used"]
+
+        common_diseases = sorted(set(rs_spikes.index) & set(ew_spikes.index))
+
+        if common_diseases:
+            log.info("  Spike consistency check:")
+            log.info(f"  {'Disease':<15} {'risk_scores spike_ratio_used':<30} "
+                     f"{'early_warnings spike_ratio_used':<33} {'match?'}")
+            for d in common_diseases:
+                rs_val = rs_spikes[d]
+                ew_val = ew_spikes[d]
+                match  = abs(rs_val - ew_val) < 0.01
+                log.info(
+                    f"  {d:<15} {rs_val:<30} {ew_val:<33} {match}"
+                )
+        else:
+            log.info("  No overlapping diseases between risk_scores and early_warnings.")
+    else:
+        log.info("  Skipped — one or both output sets are empty.")
+
+    log.info("\n" + "─" * 55)
+    log.info("STEP 4c — Reason Quality Check")
+    log.info("─" * 55)
+
+    if not scored_df.empty:
+        log.info("  Reason quality check:")
+        log.info(f"  {'risk_level':<15} {'risk_score':<11} {'disease':<12} top_risk_reason")
+        sample = scored_df.sort_values("risk_score", ascending=False)
+        for _, r in sample.iterrows():
+            log.info(
+                f"  {r['risk_level']:<15} {r['risk_score']:<11} "
+                f"{r['disease']:<12} {r['top_risk_reason']}"
+            )
+    else:
+        log.info("  No scored rows to validate.")
 
     log.info("\n" + "─" * 55)
     log.info("STEP 5 — Saving Outputs")
@@ -721,7 +941,7 @@ def main():
             for _, r in true_ew.iterrows():
                 print(
                     f"    [{r['signal_level']}]  {r['disease']:<15} "
-                    f"spike={r['spike_ratio']}x above baseline"
+                    f"spike={r['spike_ratio_used']}x above baseline"
                 )
 
     print(f"\n  Output:")
