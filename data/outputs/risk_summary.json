@@ -7,5 +7,5 @@
   "early_warning_signals": 2,
   "true_early_warnings": 1,
   "model_used": "xgboost_early_warning_model.pkl",
-  "scored_at": "2026-06-30 15:05"
+  "scored_at": "2026-07-01 18:16"
 }

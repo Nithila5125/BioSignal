@@ -11,3 +11,4 @@ beautifulsoup4
 lxml
 matplotlib
 plotly
+streamlit-autorefresh
